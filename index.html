@@ -822,9 +822,9 @@ const bc = document.getElementById('barcode');
 // ---------- stamps ----------
 const STAMPS = [
   { t: "Job-Costing Platform", y: "Now", p: "Lyles · Next.js + .NET", shape: "", c: "--ink", r: 3,
-    d: "I contribute to Progress & Projection, Lyles' internal web platform for job costing and subcontract management, which replaces an older Angular system. It's a full-stack Next.js and .NET app integrated with the company ERP, used by project managers, accounting and external subcontractors. I've shipped workflow features, security and UX fixes, and automated tests through the team's CI and pull-request process." },
-  { t: "2 Apps in Prod", y: "2026", p: "Lyles · Survey apps", shape: "round", c: "--accent", r: -8,
-    d: "I designed and built 2 survey apps now in production, used by Lyles' subsidiary companies to collect customer satisfaction responses, each with a dashboard that tracks the results. Before sending any survey email, the apps pull from the company database to confirm the work order or project has actually closed. Built with React, Node.js/Express REST APIs and SQL Server on Azure." },
+    d: "Alongside my 2 survey apps, I contribute to a third project: Progress & Projection, Lyles' internal web platform for job costing and subcontract management, which replaces an older Angular system. It's a full-stack Next.js and .NET app integrated with the company ERP, used by project managers, accounting and external subcontractors. I've shipped workflow features, security and UX fixes, and automated tests through the team's CI and pull-request process." },
+  { t: "2 Apps in Prod", y: "Now", p: "Lyles · Survey apps", shape: "round", c: "--accent", r: -8,
+    d: "I build and keep developing 2 survey apps now in production at Lyles, used by Lyles' subsidiary companies to collect customer satisfaction responses, each with a dashboard that tracks the results. Before sending any survey email, the apps pull from the company database to confirm the work order or project has actually closed. Built with React, Node.js/Express REST APIs and SQL Server on Azure." },
   { t: "15-Min Pipeline", y: "2026", p: "ERP + MS Graph", shape: "", c: "--stamp-green", r: 6,
     d: "Built an automated data pipeline that processes large datasets of service-visit records every 15 minutes, integrating the company ERP and the Microsoft Graph API." },
   { t: "4 Vulns Fixed", y: "2026", p: "Before production", shape: "oval", c: "--stamp-red", r: -4,
@@ -908,7 +908,7 @@ const CMDS = {
     ['2025', 'Data Analyst Intern, Umida Ag & Terra Tech'],
   ].map(([a, b]) => `<span class="p">${a.padEnd(10)}</span>${b}`).join('\n'),
   projects: () => `<span class="p">progress-projection</span>   job costing + subcontracts, Next.js + .NET + ERP\n<span class="p">survey-apps</span>           2 survey apps + dashboards for Lyles subsidiaries;\n                      emails go out only once the work order or project has closed\n<span class="p">service-pipeline</span>      ERP + Microsoft Graph, every 15 minutes\n<span class="p">readiness-engine</span>      Svelte + FastAPI + PostgreSQL, TRL/CRL scoring\n<span class="p">evenstar-trading</span>      membership site, 2,000+ users\n<span class="p">personal-ios</span>          my own iPhone apps in Swift + SwiftUI\n<span class="p">hibiki-ai</span>             talk with a person from history; I built its synthetic-media filter\n<span class="p">vision-3d</span>             YOLOv8 + depth cameras, 91% accuracy\n<span class="d">see the passport stamps for details</span>`,
-  now: () => `building job-costing workflows at Lyles in Next.js and .NET\nadding to Hibiki-AI's video pipeline at Fresno State\nrunning web + social for the Madera K-16 Collaborative\nmaking my own iPhone apps in Swift`,
+  now: () => `building 2 survey apps + job-costing workflows (Next.js, .NET) at Lyles\nadding to Hibiki-AI's video pipeline at Fresno State\nrunning web + social for the Madera K-16 Collaborative\nmaking my own iPhone apps in Swift`,
   hire: () => `email:    rowanelansary123@gmail.com\nlinkedin: linkedin.com/in/rowan-elansary\ngithub:   github.com/rowanhosam\nstatus:   <span class="p">open to a Summer 2027 internship</span>`,
   sudo: () => `nice try. you need clearance ROOT. check the ID card.`,
   ls: () => `about.txt  skills/  projects/  stamps/  secret.txt`,
@@ -959,7 +959,7 @@ const ROLES = {
     briefLabel: 'In 30 seconds',
     brief: [
       ['What I do', 'Production web apps end to end: React and Next.js up front, .NET, Node and FastAPI behind, SQL underneath, on Azure. Strong in data structures and algorithms, in C++.'],
-      ['Recent impact', 'Hibiki-AI won People’s Choice at the 2026 INSPIRE Convening. At Lyles I ship features on a job-costing platform used by project managers, accounting and subcontractors.'],
+      ['Recent impact', 'Hibiki-AI won People’s Choice at the 2026 INSPIRE Convening. At Lyles I build 2 survey apps now in production and ship features on a job-costing platform used by project managers, accounting and subcontractors.'],
       ['Next step', 'Copy my email at the bottom of the page, or ask me anything up top.'],
     ],
   },
