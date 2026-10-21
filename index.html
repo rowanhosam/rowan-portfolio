@@ -1019,6 +1019,7 @@ const TRACKS = {
     chips: ['Python', 'PyTorch', 'OpenCV', 'RAG', 'YOLOv8', 'TTS', 'C++ · DSA', 'SQL', 'Docker', 'Git'],
     stamps: ["People's Choice", '91% Detection', '15-Min Pipeline', '80% Faster', '2 Apps in Prod', 'Readiness Engine'],
     what: 'Generative AI research on Hibiki-AI (People’s Choice, INSPIRE 2026): I built its synthetic-media video filter in OpenCV and benchmarked voice-cloning models, plus a YOLOv8 vision system at 91% accuracy, in Python and PyTorch.',
+    impact: 'At Lyles I shipped 2 survey apps to production and now ship features on a job-costing platform used by project managers, accounting and subcontractors.',
     ask: 'What is Hibiki-AI?',
   },
 };
@@ -1067,7 +1068,7 @@ function applyRole(role, visitor = '', track = null) {
   askInput.placeholder = t ? t.ask : r.ask;
   document.getElementById('introLabel').textContent = visitor ? `Access granted · Welcome, ${visitor}` : `Access granted · ${r.clearance}`;
   document.getElementById('briefLabel').textContent = r.briefLabel;
-  const brief = t ? r.brief.map(([h, p]) => h === 'What I do' ? [h, t.what] : [h, p]) : r.brief;
+  const brief = t ? r.brief.map(([h, p]) => h === 'What I do' ? [h, t.what] : h === 'Recent impact' && t.impact ? [h, t.impact] : [h, p]) : r.brief;
   document.getElementById('briefGrid').innerHTML = brief.map(([h, p]) => `<div><h3>${esc(h)}</h3><p>${esc(p)}</p></div>`).join('');
   setChips(t ? t.chips : DEFAULT_CHIPS);
   renderStamps(t ? t.stamps : null);
