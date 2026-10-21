@@ -81,7 +81,9 @@ Claude Code) while reviewing and testing all generated code.
   background removed frame by frame.
 
 ## Skills
-- Languages: Python (1+ years), C#, Java, C++, JavaScript, TypeScript, SQL, Swift,
+- Strongest for coding interviews: C++ (takes coding assessments in C++), with a
+  strong foundation in data structures, algorithms and object-oriented design.
+- Languages: C++, Python (1+ years), C#, Java, JavaScript, TypeScript, SQL, Swift,
   Objective-C, HTML, CSS
 - Back end: C#, REST APIs, Node.js, Express, FastAPI, asynchronous services, JWT
   authentication, third-party API integrations (ERP, Microsoft Graph)

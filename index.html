@@ -54,13 +54,13 @@ body {
 :root[data-role="engineer"] #stamps { order: 6; }
 :root[data-role="engineer"] #pass { order: 7; }
 
-.skillgrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.skillgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .skillcard { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; min-width: 0; }
 .skillcard h3 { font-size: 1.02rem; margin-bottom: 12px; }
 .chipset { display: flex; flex-wrap: wrap; gap: 6px; }
 .chipset span { font: 500 .84rem/1.3 var(--font-body); border: 1px solid var(--line); background: var(--bg); border-radius: 99px; padding: 5px 11px; }
 .chipset small { color: var(--muted); font-size: .74rem; }
-@media (max-width: 1000px) { .skillgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .skillgrid { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 520px) { .skillgrid { grid-template-columns: minmax(0, 1fr); } }
 
 .visitor { border: 1px solid var(--line); background: var(--paper); border-radius: 99px; padding: 6px 12px; cursor: pointer;
@@ -215,12 +215,14 @@ section.block { padding-block: 72px; border-top: 1px solid var(--line); }
     #ff8ad8, #7ff0ff, #b6ff8a, #ffe680, #ff8ad8);
   -webkit-mask: repeating-linear-gradient(115deg, #000 0 2px, transparent 2px 7px); mask: repeating-linear-gradient(115deg, #000 0 2px, transparent 2px 7px); }
 .back { display: grid; grid-template-rows: auto 1fr auto; }
-.stripe { height: 13cqw; background: var(--ink); margin-top: 7cqw; }
-.backbody { padding: 4cqw 6cqw; display: grid; grid-template-columns: 1fr auto; gap: 4cqw; }
+.stripe { height: 10cqw; background: var(--ink); margin-top: 5cqw; }
+.backbody { padding: 3.5cqw 6cqw 2cqw; display: grid; grid-template-columns: 1fr auto; gap: 3cqw 4cqw; align-content: start; align-items: center; }
 .sig { font: 600 7cqw/1 var(--font-hand); color: var(--accent); border-bottom: .3cqw solid var(--line); padding: 1cqw 2cqw; background: repeating-linear-gradient(-45deg, transparent 0 1cqw, var(--accent-soft) 1cqw 1.4cqw); }
-.clear { display: flex; flex-wrap: wrap; gap: 1.4cqw; margin-top: 3cqw; }
-.clear i { font: 600 2.3cqw var(--font-mono); font-style: normal; border: .25cqw solid var(--line); border-radius: 99px; padding: .8cqw 2cqw; }
-.barcode { display: flex; gap: .45cqw; height: 17cqw; align-items: stretch; }
+.clear { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 1.2cqw; }
+.clear b { width: 100%; font: 600 1.9cqw var(--font-mono); letter-spacing: .14em; color: var(--muted); }
+.clear i { font: 600 2.4cqw var(--font-mono); font-style: normal; border: .25cqw solid var(--line); border-radius: 99px; padding: .8cqw 2cqw; }
+.barcode { display: flex; gap: .45cqw; height: 12cqw; align-items: stretch; }
+.clear i.key { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .barcode b { background: var(--ink); }
 .backfoot { padding: 0 6cqw 4.5cqw; font: 500 2.2cqw var(--font-mono); color: var(--muted); letter-spacing: .06em; }
 .cardside ul { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 14px; }
@@ -375,11 +377,9 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
             <div class="face back">
               <div class="stripe"></div>
               <div class="backbody">
-                <div>
-                  <div class="sig">Rowan Elansary</div>
-                  <div class="clear"><i>React</i><i>C#</i><i>Node.js</i><i>FastAPI</i><i>PostgreSQL</i><i>SQL Server</i><i>Azure</i><i>Swift</i><i>PyTorch</i></div>
-                </div>
+                <div class="sig">Rowan Elansary</div>
                 <div class="barcode" id="barcode"></div>
+                <div class="clear"><b>CLEARANCES</b><i class="key">C++ · DSA</i><i>Python</i><i>Java</i><i>TypeScript</i><i>C#</i><i>React</i><i>Node.js</i><i>SQL</i><i>Azure</i><i>Git</i></div>
               </div>
               <div class="backfoot">IF FOUND, HIRE THE HOLDER · github.com/rowanhosam</div>
             </div>
@@ -393,6 +393,7 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
           <li><kbd>✋</kbd><span>Grab the card and drag it around. Let go mid-swing to throw it.</span></li>
           <li><kbd>⏎</kbd><span>Click, tap or press Enter to flip it over.</span></li>
           <li><kbd>✦</kbd><span>Watch the foil catch the light as it spins.</span></li>
+          <li><kbd>♪</kbd><span>Turn on sound with “Hear me” at the top to hear it clack.</span></li>
         </ul>
         <button class="flipbtn" type="button" id="flipBtn">Flip card</button>
       </div>
@@ -515,6 +516,8 @@ function setSound(on) {
 }
 playBtn.onclick = () => setPlaying(vid.paused);
 soundBtn.onclick = () => {
+  sfxOn = vid.ended || vid.muted;  // the card's clack follows the visitor's sound choice
+  if (sfxOn) unlockSfx();
   if (vid.ended || vid.muted) { chatMode = false; capEl.classList.remove('ai'); shownLine = -1; vid.currentTime = 0; setSound(true); playBtn.hidden = false; setPlaying(true); }
   else setSound(false);
 };
@@ -590,7 +593,32 @@ const hanger = document.getElementById('hanger'), tilt = document.getElementById
 const rope = document.getElementById('ropeCanvas'), ctx = rope.getContext('2d');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let dragMoved = false;
+
+// Clack: a short plastic knock, synthesised (noise through a band-pass filter plus a low thump).
+// Silent until the visitor turns sound on with "Hear me", since browsers need a click first anyway.
+let sfxOn = false, audio = null, lastClack = 0;
+function unlockSfx() {
+  try { audio = audio || new AudioContext(); audio.resume(); } catch { audio = null; }
+}
+function clack(strength = 1) {
+  const now = performance.now();
+  if (!sfxOn || !audio || now - lastClack < 180) return;
+  lastClack = now;
+  const t = audio.currentTime, vol = .12 + .2 * Math.min(1, strength);
+  const noise = audio.createBuffer(1, audio.sampleRate * .05, audio.sampleRate), data = noise.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length) ** 3;
+  const src = audio.createBufferSource(); src.buffer = noise;
+  const band = audio.createBiquadFilter(); band.type = 'bandpass'; band.frequency.value = 2400 + Math.random() * 600; band.Q.value = 4;
+  const gain = audio.createGain(); gain.gain.setValueAtTime(vol, t); gain.gain.exponentialRampToValueAtTime(.001, t + .06);
+  src.connect(band).connect(gain).connect(audio.destination); src.start(t);
+  const thump = audio.createOscillator(), tg = audio.createGain();
+  thump.frequency.setValueAtTime(220, t); thump.frequency.exponentialRampToValueAtTime(90, t + .05);
+  tg.gain.setValueAtTime(vol * .6, t); tg.gain.exponentialRampToValueAtTime(.001, t + .07);
+  thump.connect(tg).connect(audio.destination); thump.start(t); thump.stop(t + .08);
+}
+
 function flip() {
+  clack(.8);
   card.classList.toggle('flipped');
   card.setAttribute('aria-label', `ID card, ${card.classList.contains('flipped') ? 'back' : 'front'}. Press to flip.`);
 }
@@ -601,7 +629,7 @@ document.getElementById('flipBtn').onclick = flip;
 // and one heavier point (the card's centre) hangs below it. The card's angle follows them.
 const ROPE_LEN = 150, SEGMENTS = 12, GRAVITY = 1800, STEP = 1 / 60;
 let W = 0, H = 0, cardW = 0, cardH = 0, anchor = { x: 0, y: 14 }, pts = [], C = null;
-let drag = null, swing = { rx: 0, ry: 0 };
+let drag = null, swing = { rx: 0, ry: 0 }, prevAngle = 0, prevOmega = 0;
 
 function layout() {
   const width = scene.clientWidth;
@@ -658,6 +686,10 @@ function render() {
   const e = pts[SEGMENTS];
   const angle = -Math.atan2(C.x - e.x, C.y - e.y);
   hanger.style.transform = `translate(${e.x - cardW / 2}px, ${e.y}px) rotate(${angle}rad)`;
+  // A hard swing clacks at the top of its arc, where the clip rattles as the card turns back.
+  const omega = angle - prevAngle;
+  if (!drag && Math.sign(omega) !== Math.sign(prevOmega) && Math.abs(angle) > .55) clack((Math.abs(angle) - .55) * 2);
+  prevAngle = angle; prevOmega = omega;
   // Sideways speed spins the card a little in 3D; that also moves the foil highlight.
   const vx = C.x - C.px, vy = C.y - C.py;
   swing.ry += (Math.max(-55, Math.min(55, vx * 5)) - swing.ry) * .2;
@@ -770,7 +802,8 @@ showStamp(0);
 // ---------- skills ----------
 // "Name|note" shows the note in small text next to the skill.
 const SKILLS = [
-  ['Languages', ['Python|1+ yrs', 'C#', 'Java', 'C++', 'JavaScript', 'TypeScript', 'SQL', 'Swift|personal apps', 'Objective-C', 'HTML', 'CSS']],
+  ['Languages', ['C++|coding assessments', 'Python|1+ yrs', 'Java', 'JavaScript', 'TypeScript', 'C#', 'SQL', 'Swift|personal apps', 'Objective-C', 'HTML', 'CSS']],
+  ['Computer science', ['Data structures & algorithms|C++', 'Object-oriented design', 'Database systems', 'Software engineering', 'Computer security']],
   ['Back end', ['C#', 'REST APIs', 'Node.js', 'Express', 'FastAPI', 'Async services', 'JWT authentication', 'ERP integrations', 'Microsoft Graph API']],
   ['Front end & mobile', ['React', 'Svelte|F3 Innovate', 'Tailwind CSS', 'Responsive UI', 'SwiftUI|personal apps', 'iOS', 'macOS']],
   ['Data', ['SQL Server', 'PostgreSQL', 'BigQuery', 'SQLAlchemy', 'Data modeling', 'Data pipelines', 'Apache Spark (PySpark)', 'Data validation']],
@@ -849,7 +882,7 @@ const ROLES = {
     name: 'Recruiter', clearance: 'HR-VIEW', cta: ['See my impact →', '#stamps'], ask: 'When are you available for an internship?',
     briefLabel: 'In 30 seconds',
     brief: [
-      ['What I do', 'Full web apps with React and C#, plus FastAPI and Node APIs and SQL, shipped to production on Azure.'],
+      ['What I do', 'Full web apps with React and C#, plus FastAPI and Node APIs and SQL, shipped to production on Azure. Strong in data structures and algorithms, in C++.'],
       ['Recent impact', 'People’s Choice award at INSPIRE 2026 for my generative AI research. At Lyles I built 2 survey apps with tracking dashboards for its subsidiary companies, plus a 15-minute ERP data pipeline, and I contribute to projects across the department.'],
       ['Availability', 'Summer 2027 internship (May–Aug). CS B.S./M.S. at Fresno State, graduating December 2027.'],
     ],
