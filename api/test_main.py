@@ -1,4 +1,5 @@
 """Run with: ANTHROPIC_API_KEY=test pytest (from the api/ folder). Claude is faked; no API calls."""
+import importlib
 from types import SimpleNamespace
 
 import pytest
@@ -53,3 +54,18 @@ def test_rate_limited_per_visitor(api, monkeypatch):
     monkeypatch.setattr(main.client.messages, "create", fake_reply("ok"))
     codes = [api.post("/ask", json={"question": "hi"}).status_code for _ in range(7)]
     assert codes[:6] == [200] * 6 and codes[6] == 429
+
+
+def test_site_wide_daily_cap(monkeypatch):
+    # With the site-wide cap set below the per-visitor limit, the cap is what stops the third question.
+    monkeypatch.setenv("DAILY_CAP", "2")
+    capped = importlib.reload(main)
+    try:
+        capped.limiter.reset()
+        monkeypatch.setattr(capped.client.messages, "create", fake_reply("ok"))
+        api = TestClient(capped.app)
+        codes = [api.post("/ask", json={"question": "hi"}).status_code for _ in range(3)]
+        assert codes == [200, 200, 429]
+    finally:
+        monkeypatch.delenv("DAILY_CAP")
+        importlib.reload(main)

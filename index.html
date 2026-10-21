@@ -3,6 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Rowan Elansary, software engineer: full stack, front end, back end, app design and AI. Open to Summer 2027 internships.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rowanhosam.github.io/rowan-portfolio/">
+<meta property="og:title" content="Rowan Elansary · Software Engineer">
+<meta property="og:description" content="Rowan Elansary, software engineer: full stack, front end, back end, app design and AI. Open to Summer 2027 internships.">
+<meta property="og:image" content="https://rowanhosam.github.io/rowan-portfolio/media/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://rowanhosam.github.io/rowan-portfolio/media/og.png">
+<link rel="icon" href="media/photo.png">
 <title>Rowan's Access Pass</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -342,7 +353,7 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
           <input id="askInput" type="text" maxlength="300" placeholder="What's your strongest project?">
           <button type="submit" aria-label="Send question"><svg viewBox="0 0 16 16"><path d="M2 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         </div>
-        <span class="askhint">AI answers based on my CV · limit of 6 questions a minute</span>
+        <span class="askhint" id="askHint">AI answers based on my CV · 6 questions per visitor</span>
       </form>
     </div>
   </section>
@@ -569,15 +580,41 @@ const CHAT_API = ['localhost', '127.0.0.1'].includes(location.hostname)
   : 'https://rowan-portfolio-api.onrender.com';
 const chatHistory = [];
 
+// Each visitor gets 6 questions a day (the server enforces it; this count only drives the hint).
+const ASK_LIMIT = 6;
+function askedToday() {
+  try { const s = JSON.parse(localStorage.getItem('rowan-asks')); return s && s.day === new Date().toDateString() ? s.n : 0; } catch { return 0; }
+}
+function noteAsked(n) {
+  try { localStorage.setItem('rowan-asks', JSON.stringify({ day: new Date().toDateString(), n })); } catch {}
+  const left = Math.max(0, ASK_LIMIT - n);
+  document.getElementById('askHint').textContent = left
+    ? `AI answers based on my CV · ${left} of ${ASK_LIMIT} questions left`
+    : 'AI answers based on my CV · that was your last question for today';
+}
+if (askedToday()) noteAsked(askedToday());
+const OUT_OF_QUESTIONS = "That's all 6 of your questions for today. For anything else, email me. The address is at the bottom of the page.";
+
+// The free server sleeps when idle, so the first question can take up to a minute.
+let onSlow = null;
 async function askRowan(question) {
-  const res = await fetch(`${CHAT_API}/ask`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ question, history: chatHistory.slice(-6) }),
-  });
-  if (res.status === 429) throw new Error("You've asked a lot of questions. Give me a minute, or use the contact section.");
+  if (askedToday() >= ASK_LIMIT) throw new Error(OUT_OF_QUESTIONS);
+  const ctrl = new AbortController(), giveUp = setTimeout(() => ctrl.abort(), 75000);
+  const slow = setTimeout(() => onSlow && onSlow(), 4000);
+  let res;
+  try {
+    res = await fetch(`${CHAT_API}/ask`, {
+      method: 'POST', signal: ctrl.signal,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question, history: chatHistory.slice(-6) }),
+    });
+  } catch (err) {
+    throw err.name === 'AbortError' ? new Error('The assistant took too long to answer. Try again in a moment.') : err;
+  } finally { clearTimeout(giveUp); clearTimeout(slow); }
+  if (res.status === 429) { noteAsked(ASK_LIMIT); throw new Error(OUT_OF_QUESTIONS); }
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || 'The assistant is unavailable right now.');
   const { answer } = await res.json();
+  noteAsked(askedToday() + 1);
   chatHistory.push({ role: 'user', content: question }, { role: 'assistant', content: answer.slice(0, 600) });
   return answer;
 }
@@ -605,6 +642,7 @@ askForm.onsubmit = async e => {
   askInput.value = ''; askInput.disabled = true;
   vid.pause(); setSound(false);
   showInBubble('<span class="dots"><i></i><i></i><i></i></span>');
+  onSlow = () => showInBubble('Waking up my assistant, one moment… <span class="dots"><i></i><i></i><i></i></span>');
   try { revealWords(await askRowan(q)); }
   catch (err) { showInBubble(esc(chatError(err)), false); }
   finally { askInput.disabled = false; askInput.focus(); }
@@ -851,7 +889,7 @@ document.getElementById('skillGrid').innerHTML = SKILLS.map(([cat, items]) => `<
 // ---------- terminal ----------
 const out = document.getElementById('out'), cmd = document.getElementById('cmd');
 const CMDS = {
-  help: () => `available commands:\n  <span class="p">whoami</span>      who is this\n  <span class="p">skills</span>      what I can do\n  <span class="p">stack</span>       tools I use\n  <span class="p">experience</span>  where I've worked\n  <span class="p">projects</span>    things I've built\n  <span class="p">now</span>         what I'm working on\n  <span class="p">hire</span>        how to reach me\n  <span class="p">ask</span> …       ask me anything (AI, based on my CV, 6 a minute)\n  <span class="p">clear</span>       wipe the screen`,
+  help: () => `available commands:\n  <span class="p">whoami</span>      who is this\n  <span class="p">skills</span>      what I can do\n  <span class="p">stack</span>       tools I use\n  <span class="p">experience</span>  where I've worked\n  <span class="p">projects</span>    things I've built\n  <span class="p">now</span>         what I'm working on\n  <span class="p">hire</span>        how to reach me\n  <span class="p">ask</span> …       ask me anything (AI, based on my CV, 6 per visitor)\n  <span class="p">clear</span>       wipe the screen`,
   whoami: () => `Rowan Elansary. Full-stack engineer and CS student at Fresno State.\n1+ years across 5 internships: production web apps, APIs, data pipelines, AI research and web + social media.`,
   skills: () => SKILLS.map(([a, items]) => `<span class="p">${a.padEnd(15)}</span><span class="d">${items.map(s => s.replace('|', ' ')).join(', ')}</span>`).join('\n'),
   stack: () => `c# · python · java · c++ · javascript · typescript · sql · swift\nreact · tailwind · svelte · fastapi · node · express\npostgresql · sql server · bigquery · sqlalchemy · pyspark\nazure · docker · linux · git`,
@@ -886,6 +924,7 @@ function run(input) {
 async function askInTerminal(input, question) {
   const line = document.createElement('span');
   line.innerHTML = `<span class="p">$</span> ${esc(input)}\n<span class="d">rowan-ai is thinking…</span>\n\n`;
+  onSlow = () => { line.querySelector('.d').textContent = 'waking up rowan-ai (free server, up to a minute)…'; };
   out.appendChild(line); out.scrollTop = out.scrollHeight;
   try { line.innerHTML = `<span class="p">$</span> ${esc(input)}\n<span class="p">rowan-ai</span> ${esc(await askRowan(question))}\n\n`; }
   catch (err) { line.innerHTML = `<span class="p">$</span> ${esc(input)}\n<span class="d">${esc(chatError(err))}</span>\n\n`; }

@@ -26,7 +26,7 @@ Visitors' questions go to a small FastAPI service in `api/`, which asks Claude H
 answers in the speech bubble (and in the terminal for anything that isn't a command).
 It only knows what's in `api/profile.md`; lines starting with `TODO` are ignored.
 
-- Rate limit: 6 questions a minute and 60 a day per visitor (slowapi).
+- Limits: 6 questions per visitor per day, and 300 a day site-wide (`DAILY_CAP`), via slowapi. At Claude Haiku 5.5 prices that caps spend at roughly $0.10 a day.
 - Tests: `cd api && ANTHROPIC_API_KEY=test pytest` (Claude is faked, no cost).
 - Run locally: `cd api && uvicorn main:app --reload --port 8000`, then serve the site with
   `python3 -m http.server 8080` and open http://localhost:8080.
