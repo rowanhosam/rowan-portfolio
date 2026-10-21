@@ -14,9 +14,9 @@ A one-page portfolio built around an access-pass idea:
 | Intro video | transparent `media/intro.webm` (Chrome) + `media/intro-hevc.mp4` (Safari) |
 | Captions | `CAPTIONS` array in the script (times in seconds) |
 | Photo on the card | `media/photo.png` |
-| Achievements | `STAMPS` array (remove `example: true` once real) |
+| Achievements | `STAMPS` array |
 | Terminal answers | `CMDS` object |
-| Email | search for `hello@yourdomain.com` |
+| Email | `#email` in the footer and `hire` in the terminal |
 
 No build step. Open `index.html` in a browser, or serve with `python3 -m http.server`.
 
