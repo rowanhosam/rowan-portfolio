@@ -43,8 +43,6 @@ Claude Code) while reviewing and testing all generated code.
     Microsoft Graph API.
   - Found and fixed 4 security and data-integrity vulnerabilities before
     production; debugs and resolves production issues.
-  - Helps build and integrate a Swift app for iPhone and Mac, used internally and
-    by partner companies, connected to an Azure API and SQL Server back end.
   - Works in 2-week Agile sprints with weekly stand-ups and code reviews.
 - Website & Social Media Intern, Madera K-16 Collaborative, Fresno State. Current.
   - Runs the collaborative's website and social media channels.
@@ -77,7 +75,7 @@ Claude Code) while reviewing and testing all generated code.
   deployed a responsive site serving 2,000+ users; manages hosting, deployments,
   version control and payment redirection.
 - Personal iPhone apps in Swift and SwiftUI, built outside school and work (ongoing).
-  Swift/SwiftUI is also used at Lyles for an internal and partner-facing iPhone and Mac app.
+  Swift is used only for these personal projects, not at any job.
 - This portfolio: static site plus a FastAPI chat service that calls Claude
   Haiku, rate limited per visitor; the intro video is AI-generated with the
   background removed frame by frame.
