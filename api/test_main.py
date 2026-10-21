@@ -69,3 +69,40 @@ def test_site_wide_daily_cap(monkeypatch):
     finally:
         monkeypatch.delenv("DAILY_CAP")
         importlib.reload(main)
+
+
+class FakeHttp:
+    sent = []
+    def __init__(self, *a, **k): pass
+    async def __aenter__(self): return self
+    async def __aexit__(self, *a): return False
+    async def post(self, url, headers, json):
+        FakeHttp.sent.append(json)
+        return SimpleNamespace(status_code=200, text="ok")
+
+
+def test_visit_emails_name_when_configured(api, monkeypatch):
+    FakeHttp.sent = []
+    monkeypatch.setenv("RESEND_API_KEY", "re_test")
+    monkeypatch.setenv("ALERT_EMAIL", "me@example.com")
+    monkeypatch.setattr(main.httpx, "AsyncClient", FakeHttp)
+    r = api.post("/visit", json={"role": "recruiter", "track": "frontend", "name": "Sam"})
+    assert r.status_code == 204
+    assert FakeHttp.sent[0]["to"] == ["me@example.com"]
+    assert FakeHttp.sent[0]["subject"] == "Sam (Recruiter · Front end) opened your portfolio"
+
+
+def test_visit_is_quiet_without_keys(api, monkeypatch):
+    FakeHttp.sent = []
+    monkeypatch.delenv("RESEND_API_KEY", raising=False)
+    monkeypatch.setattr(main.httpx, "AsyncClient", FakeHttp)
+    assert api.post("/visit", json={"role": "curious", "name": "Ana"}).status_code == 204
+    assert FakeHttp.sent == []
+
+
+def test_visit_rejects_bad_input_and_floods(api, monkeypatch):
+    monkeypatch.delenv("RESEND_API_KEY", raising=False)
+    assert api.post("/visit", json={"role": "admin", "name": "x"}).status_code == 422
+    assert api.post("/visit", json={"role": "curious", "name": ""}).status_code == 422
+    codes = [api.post("/visit", json={"role": "curious", "name": "a"}).status_code for _ in range(4)]
+    assert codes == [204, 204, 204, 429]

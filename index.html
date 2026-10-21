@@ -1143,6 +1143,9 @@ gateForm.onsubmit = async e => {
   applyRole(role, visitor, track);
   trackEvent(`gate/${role}${track ? '/' + track : ''}${visitor ? '/' + visitor.replace(/[\/?#]+/g, ' ').replace(/\s+/g, ' ').trim() : ''}`,
     `${ROLES[role].name}${track ? ' · ' + TRACKS[track].name : ''}${visitor ? ' · ' + visitor : ''}`);
+  // If they left a name, my chat server emails me (and wakes up early, so the chat answers faster).
+  if (visitor) fetch(`${CHAT_API}/visit`, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ role, track, name: visitor }) }).catch(() => {});
   granted.hidden = false;
   await wait(900);
   closeGate();

@@ -11,5 +11,9 @@ services:
     envVars:
       - key: ANTHROPIC_API_KEY
         sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: ALERT_EMAIL
+        sync: false
       - key: ALLOWED_ORIGINS
         value: https://rowanhosam.github.io
