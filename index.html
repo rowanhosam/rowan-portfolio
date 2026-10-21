@@ -271,7 +271,7 @@ section.block { padding-block: 72px; border-top: 1px solid var(--line); }
 .stamp .t { font: 800 1.02rem/1.05 var(--font-display); text-transform: uppercase; letter-spacing: -.01em; margin: 6px 0; }
 .stamp .p { font: 600 .66rem var(--font-mono); letter-spacing: .14em; text-transform: uppercase; }
 .stamp.example { opacity: .55; border-style: dashed; }
-.record { margin-top: 32px; padding-top: 22px; border-top: 1px dashed var(--line); display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 18px; }
+.record { scroll-margin-top: 24px; outline: none; margin-top: 32px; padding-top: 22px; border-top: 1px dashed var(--line); display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 18px; }
 .record h3 { font-size: 1.5rem; }
 .record p { margin: 8px 0 0; color: var(--muted); max-width: 62ch; }
 .recimg { margin: 18px 0 0; width: min(340px, 100%); rotate: -1.5deg; background: var(--paper); padding: 8px 8px 10px; border: 1px solid var(--line); box-shadow: 0 16px 30px -18px color-mix(in srgb, var(--ink) 50%, transparent); }
@@ -436,7 +436,7 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
     </div>
     <div class="passport">
       <div class="stamps" id="stampGrid"></div>
-      <div class="record" id="record" aria-live="polite"></div>
+      <div class="record" id="record" aria-live="polite" tabindex="-1"></div>
     </div>
   </section>
 
@@ -855,6 +855,19 @@ function showStamp(i) {
   rec.innerHTML = `<div><span class="label">Entry ${String(pos + 1).padStart(2, '0')} · ${s.y}</span></div>
     <div><h3>${s.t}</h3><p>${s.d}</p>${s.img ? `<figure class="recimg"><img src="${s.img.src}" alt="${s.img.alt}" loading="lazy"></figure>` : ''}</div>`;
 }
+// Clicking a stamp shows its entry and brings the entry into view (it sits below the grid).
+function openStamp(i) {
+  showStamp(i);
+  const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  rec.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
+  rec.focus({ preventScroll: true });
+  // Some embedded browsers ignore smooth scrolling; if we haven't arrived, jump there.
+  setTimeout(() => {
+    const top = rec.getBoundingClientRect().top;
+    if (top < 0 || top > innerHeight * .5) rec.scrollIntoView({ block: 'start' });
+  }, 700);
+}
+
 // Stamps render in the order that suits the visitor's track (titles listed in TRACKS below).
 let stampOrder = STAMPS.map((_, i) => i);
 function renderStamps(titles) {
@@ -867,7 +880,7 @@ function renderStamps(titles) {
     b.className = `stamp ${s.shape}`;
     b.style.setProperty('--c', `var(${s.c})`); b.style.setProperty('--r', `${s.r}deg`);
     b.innerHTML = `<div><div class="y">★ ${s.y} ★</div><div class="t">${s.t}</div><div class="p">${s.p}</div></div>`;
-    b.onclick = () => showStamp(i);
+    b.onclick = () => openStamp(i);
     grid.appendChild(b);
   });
   showStamp(stampOrder[0]);
