@@ -32,8 +32,8 @@ Claude Code) while reviewing and testing all generated code.
 ## Experience
 - AI & Innovation Intern, Lyles Construction Group (Lyles Services Co.), Fresno, CA.
   Aug 2026 to present.
-  - Still builds and maintains the 2 survey apps below. Progress & Projection is
-    a third project Rowan contributes to.
+  - The 2 survey apps below were Rowan's first two Lyles projects and are done
+    and in production. Progress & Projection is the third and current project.
   - Contributes to Progress & Projection, Lyles' internal web platform for job
     costing and subcontract management, which replaces an older Angular system.
     It's a full-stack Next.js and .NET (C#) web app integrated with the company
@@ -41,7 +41,7 @@ Claude Code) while reviewing and testing all generated code.
     Shipped workflow features, security and UX fixes, and automated tests
     through the team's CI and pull-request process.
   - Also contributes to other projects across the department.
-  - Designs, builds and maintains 2 survey apps in production, used by Lyles' subsidiary
+  - Designed, built and shipped 2 survey apps, now in production, used by Lyles' subsidiary
     companies to collect customer satisfaction responses, each with a dashboard
     that tracks the results. Before sending a survey email, the apps pull from the
     company database to check that the work order or project has closed.
