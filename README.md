@@ -84,4 +84,4 @@ On `localhost` the page talks to the API on port 8000 automatically.
 ## Contact
 
 **Rowan Elansary** · rowanelansary123@gmail.com · [LinkedIn](https://linkedin.com/in/rowan-elansary)
-Open to a Summer 2027 internship (mid-May to late August) in full stack, front end, back end, app design or AI.
+Open to a Summer 2027 internship in full stack, front end, back end, app design or AI.

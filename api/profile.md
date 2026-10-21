@@ -6,16 +6,15 @@ Edit this file to change what the chat assistant knows. Lines starting with
 ## Basics
 - Name: Rowan Elansary
 - Role: Software engineer (full stack at the core) and Computer Science student
-- Looking for: a Summer 2027 internship, mid-May to late August, in software
-  engineering: full stack, front end, back end, mobile and app design, or AI.
+- Looking for: a Summer 2027 internship in software engineering: full stack, front end, back end, mobile and app design, or AI.
   Enjoys exploring across the stack.
 - Location: Fresno, CA
 - Email: rowanelansary123@gmail.com
 - LinkedIn: linkedin.com/in/rowan-elansary
 - GitHub: github.com/rowanhosam
 - Experience: 1+ years across 5 internships, plus two research assistant roles
-- Availability: open to a Summer 2027 internship (May to August), then
-  returning to full-time studies.
+- Availability: Summer 2027 (internship), then returning to full-time studies.
+  If asked for exact dates, say they're flexible and to get in touch.
 
 ## Summary
 Builds full-stack applications, back-end services and REST APIs, and data
@@ -33,8 +32,13 @@ Claude Code) while reviewing and testing all generated code.
 ## Experience
 - AI & Innovation Intern, Lyles Construction Group (Lyles Services Co.), Fresno, CA.
   Aug 2026 to present.
-  - Builds full web apps with C# and React.
-  - Also contributes to other projects across the department, beyond the apps listed here.
+  - Contributes to Progress & Projection, Lyles' internal web platform for job
+    costing and subcontract management, which replaces an older Angular system.
+    It's a full-stack Next.js and .NET (C#) web app integrated with the company
+    ERP, used by project managers, accounting and external subcontractors.
+    Shipped workflow features, security and UX fixes, and automated tests
+    through the team's CI and pull-request process.
+  - Also contributes to other projects across the department.
   - Designed and built 2 survey apps in production, used by Lyles' subsidiary
     companies to collect customer satisfaction responses, each with a dashboard
     that tracks the results. Before sending a survey email, the apps pull from the
@@ -58,7 +62,21 @@ Claude Code) while reviewing and testing all generated code.
     services for a platform used by farmers, professors and research assistants.
 - Research Assistant, Generative AI, Computer Science Department, Fresno State.
   Jan 2026 to present.
-  - The project is called Hibiki-AI, an AI-driven historical persona platform.
+  - The project is called Hibiki-AI (AIISLab at Fresno State). It lets people
+    talk with a person from history in their own words. The first persona is
+    Fred Hirasuna, a Nisei farmer and JACL leader from Fresno, who answers only
+    from his oral-history interviews held by Fresno State's Henry Madden Library.
+    Answers can come back as text, voice and lip-synced video.
+  - How it works: a React client; a FastAPI service that retrieves passages
+    from the interviews (RAG) to ground answers; and a GPU job pipeline that
+    turns answers into speech, then lip-synced video, then smooth transitions.
+  - Rowan's own contribution in code: the Synthetic Media Modulation step, an
+    OpenCV cartoonization filter applied to every generated video so it is
+    never mistaken for real footage of the (often deceased) person. Written
+    from scratch (bilateral smoothing, posterized colors, light edge outlines)
+    to avoid licensing problems in existing models; switched from k-means to
+    posterization so a 30-second clip takes about 5 seconds. Tested on all
+    900 frames of real reference footage; merged through a pull request.
   - Hibiki-AI won the People's Choice Award at the 2026 INSPIRE Convening
     (hosted by Learning Lab, theme "Reinventing Higher Education").
   - Uses retrieval-augmented generation (RAG) to ground model responses for an
