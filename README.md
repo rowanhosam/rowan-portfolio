@@ -1,51 +1,87 @@
+<div align="center">
+
+<a href="https://rowanhosam.github.io/rowan-portfolio/"><img src="media/og.png" alt="Rowan Elansary, Software Engineer" width="820"></a>
+
 # Rowan's Access Pass
 
-A one-page portfolio built around an access-pass idea:
+**An interactive portfolio for Rowan Elansary, software engineer and CS student at Fresno State.**
 
-- **Talking intro tile**: plays `intro.mp4` with synced captions. Without a video it shows an animated stand-in avatar.
-- **ID card**: CR80-proportioned card that tilts with the pointer and flips to show skills.
-- **Passport stamps**: achievements as clickable stamps.
-- **Terminal**: type `help` to explore skills, stack and projects.
+### [→ Visit the live site](https://rowanhosam.github.io/rowan-portfolio/)
 
-## Make it yours
+Hiring for a specific role? Open the version built for it:
+[Full stack](https://rowanhosam.github.io/rowan-portfolio/#recruiter-fullstack) ·
+[Front end](https://rowanhosam.github.io/rowan-portfolio/#recruiter-frontend) ·
+[Back end](https://rowanhosam.github.io/rowan-portfolio/#recruiter-backend) ·
+[App / UX design](https://rowanhosam.github.io/rowan-portfolio/#recruiter-design) ·
+[AI / ML](https://rowanhosam.github.io/rowan-portfolio/#recruiter-ai)
 
-| What | Where |
-| --- | --- |
-| Intro video | transparent `media/intro.webm` (Chrome) + `media/intro-hevc.mp4` (Safari) |
-| Captions | `CAPTIONS` array in the script (times in seconds) |
-| Photo on the card | `media/photo.png` |
-| Achievements | `STAMPS` array |
-| Terminal answers | `CMDS` object |
-| Email | `#email` in the footer and `hire` in the terminal |
+</div>
 
-No build step. Open `index.html` in a browser, or serve with `python3 -m http.server`.
+---
 
-## AI chat ("Ask me anything")
+## What's inside
 
-Visitors' questions go to a small FastAPI service in `api/`, which asks Claude Haiku and
-answers in the speech bubble (and in the terminal for anything that isn't a command).
-It only knows what's in `api/profile.md`; lines starting with `TODO` are ignored.
+| | Feature | What it does |
+|---|---|---|
+| 🎫 | **Access gate** | Visitors pick *Recruiter*, *Engineer* or *Just curious*. Recruiters also pick what they're hiring for, and the page rearranges itself: section order, featured achievements, skills on the ID card, intro text and the rotating headline. |
+| 🎥 | **Talking intro** | A full-body video introduction with the background removed, standing directly on the page, with word-by-word captions. Plays once on arrival; replay with sound on demand. |
+| 💬 | **Ask me anything** | An AI assistant answers visitors' questions in the speech bubble, using only facts from my CV. Limited to 6 questions per visitor. |
+| 🪪 | **Lanyard ID card** | Grab it, swing it, throw it. A physics-simulated lanyard with a 3D card that flips, catches the light with a holographic foil and clacks when it swings hard. |
+| 🛂 | **Passport stamps** | Achievements as ink stamps: production apps, a 15-minute data pipeline, a People's Choice award at INSPIRE 2026 and more. Click one to read the entry. |
+| ⌨️ | **Terminal** | Type `help`, `experience`, `projects` or `skills`, or just ask a question. Try `sudo`. |
 
-- Limits: 6 questions per visitor per day, and 300 a day site-wide (`DAILY_CAP`), via slowapi. At Claude Haiku 5.5 prices that caps spend at roughly $0.10 a day.
-- Tests: `cd api && ANTHROPIC_API_KEY=test pytest` (Claude is faked, no cost).
-- Run locally: `cd api && uvicorn main:app --reload --port 8000`, then serve the site with
-  `python3 -m http.server 8080` and open http://localhost:8080.
+## How it's built
 
-### Deploy the API (Render, free)
-1. New → Blueprint → pick this repo (it reads `render.yaml`).
-2. Set `ANTHROPIC_API_KEY` in the Render dashboard.
-3. If your site isn't at `https://rowanhosam.github.io`, change `ALLOWED_ORIGINS`.
-4. If Render gives a different URL than `rowan-portfolio-api.onrender.com`, update `CHAT_API` in `index.html`.
+**Front end: one static page, no framework, no build step**
+- **Lanyard physics:** the strap is 12 points simulated with Verlet integration (gravity plus distance constraints solved iteratively), with a heavier point for the card. The card's angle follows the end of the strap, and its sideways speed spins it in 3D. Written from scratch, no physics library.
+- **ID card:** real CR80 proportions (85.60 × 53.98 mm), CSS 3D flip, a holographic foil made from a masked `conic-gradient`, and sizes in container units so it scales cleanly.
+- **Sound:** the clack is generated live with the Web Audio API (band-passed noise plus a short low tone). No audio files.
+- **Transparent video:** VP9 WebM with alpha for Chrome and Firefox, HEVC with alpha for Safari, picked at runtime.
+- **Role-based layout:** CSS `order` on a flex column plus a small `TRACKS` config. Shareable links like `#recruiter-backend` skip the gate.
+- **Respects the visitor:** honours `prefers-reduced-motion`, works with a keyboard, and is responsive down to phone width.
 
-## Access gate
+**Back end: AI chat service (`api/`)**
+- **FastAPI** service calling **Claude Haiku 5.5** through the official Anthropic Python SDK.
+- Answers only from [`api/profile.md`](api/profile.md), in the first person, and declines anything off-topic.
+- **Cost and abuse limits** with slowapi: 6 questions per visitor per day and 300 per day site-wide, which caps spend at about $0.10 a day. CORS allows only this site, and inputs are length-checked with Pydantic.
+- **Tests** with pytest, with Claude faked so they cost nothing: answers, history handling, refusals, input validation, and both rate limits.
+- Deployed on **Render** (free plan) from [`render.yaml`](render.yaml). The page shows a "waking up" message while the free server starts.
 
-First-time visitors pick **Recruiter**, **Engineer** or **Just curious**; the page then
-reorders its sections and swaps the intro button, ask-box hint and brief for that role
-(`ROLES` in the page script). The "Visitor · change" chip reopens it.
+**Media pipeline**
+- The intro is AI-generated with LongCat-Video-Avatar 1.5 from a photo and a voice recording.
+- The background was removed frame by frame with **BiRefNet** (via rembg), then encoded with **ffmpeg**.
 
-Share a link ending in `#recruiter`, `#engineer` or `#curious` to skip the gate with that role.
+## Tech
 
-Recruiters also pick what they're hiring for (full stack, front end, back end, app/UX design,
-AI/ML). That reorders the stamps, swaps the card-back skills, the "What I do" line, the ask-box
-hint and the rotating headline word (`TRACKS` in the page script). Track links:
-`#recruiter-fullstack`, `#recruiter-frontend`, `#recruiter-backend`, `#recruiter-design`, `#recruiter-ai`.
+`HTML` `CSS` `JavaScript` `Canvas` `Web Audio API` · `Python` `FastAPI` `Pydantic` `slowapi` `pytest` · `Claude API` · `ffmpeg` `rembg / BiRefNet` · `GitHub Pages` `Render`
+
+## Project structure
+
+```
+index.html          the whole site: markup, styles and scripts
+media/              intro video (WebM + HEVC with alpha), photos, link-preview image
+api/main.py         chat API (FastAPI + Claude), limits and CORS
+api/profile.md      the only facts the assistant may use
+api/test_main.py    tests (Claude is faked)
+render.yaml         Render deploy config
+```
+
+## Run it locally
+
+```bash
+python3 -m http.server 8080          # site at http://localhost:8080
+```
+
+```bash
+cd api
+pip install -r requirements.txt
+ANTHROPIC_API_KEY=your-key uvicorn main:app --reload --port 8000   # chat API
+ANTHROPIC_API_KEY=test pytest                                       # tests, no API calls
+```
+
+On `localhost` the page talks to the API on port 8000 automatically.
+
+## Contact
+
+**Rowan Elansary** · rowanelansary123@gmail.com · [LinkedIn](https://linkedin.com/in/rowan-elansary)
+Open to a Summer 2027 internship (mid-May to late August) in full stack, front end, back end, app design or AI.
