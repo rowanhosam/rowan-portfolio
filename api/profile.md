@@ -58,7 +58,9 @@ Claude Code) while reviewing and testing all generated code.
     services for a platform used by farmers, professors and research assistants.
 - Research Assistant, Generative AI, Computer Science Department, Fresno State.
   Jan 2026 to present.
-  - This research won the People's Choice award at the INSPIRE 2026 conference.
+  - The project is called Hibiki-AI, an AI-driven historical persona platform.
+  - Hibiki-AI won the People's Choice Award at the 2026 INSPIRE Convening
+    (hosted by Learning Lab, theme "Reinventing Higher Education").
   - Uses retrieval-augmented generation (RAG) to ground model responses for an
     AI-driven historical persona platform.
   - Benchmarks generative AI models across speech, image and video, including 4

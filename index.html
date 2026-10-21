@@ -34,6 +34,7 @@
   --accent-soft: #d9defd;
   --stamp-red: #b3242f;
   --stamp-green: #1d6f48;
+  --gold: #a87412;
   --term-bg: #0f1420;
   --term-fg: #d6deeb;
   --term-dim: #7c879b;
@@ -259,7 +260,7 @@ section.block { padding-block: 72px; border-top: 1px solid var(--line); }
   background-image: repeating-radial-gradient(circle at 20% 30%, transparent 0 14px, color-mix(in srgb, var(--accent) 7%, transparent) 14px 15px); }
 .stamps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 26px 18px; }
 @media (max-width: 1000px) { .stamps { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.stamp { all: unset; cursor: pointer; justify-self: center; display: grid; place-items: center; text-align: center; color: var(--c);
+.stamp { all: unset; box-sizing: border-box; cursor: pointer; justify-self: center; display: grid; place-items: center; text-align: center; color: var(--c);
   border: 3px solid var(--c); padding: 18px 20px; width: min(230px, 100%); min-height: 150px; transform: rotate(var(--r));
   transition: transform .25s; position: relative; mix-blend-mode: multiply; }
 .stamp::after { content: ""; position: absolute; inset: 5px; border: 1px solid var(--c); border-radius: inherit; }
@@ -273,6 +274,8 @@ section.block { padding-block: 72px; border-top: 1px solid var(--line); }
 .record { margin-top: 32px; padding-top: 22px; border-top: 1px dashed var(--line); display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 18px; }
 .record h3 { font-size: 1.5rem; }
 .record p { margin: 8px 0 0; color: var(--muted); max-width: 62ch; }
+.recimg { margin: 18px 0 0; width: min(340px, 100%); rotate: -1.5deg; background: var(--paper); padding: 8px 8px 10px; border: 1px solid var(--line); box-shadow: 0 16px 30px -18px color-mix(in srgb, var(--ink) 50%, transparent); }
+.recimg img { display: block; width: 100%; height: auto; }
 
 /* terminal */
 .term { background: var(--term-bg); color: var(--term-fg); border-radius: 18px; font: 400 .9rem/1.6 var(--font-mono); overflow: hidden; border: 1px solid var(--line); }
@@ -831,8 +834,9 @@ const STAMPS = [
     d: "Built a real-time object detection and 3D localization system in Python with YOLOv8 and depth cameras, reaching 91% detection accuracy." },
   { t: "2,000+ Users", y: "2026", p: "evenstar-trading.com", shape: "oval", c: "--stamp-red", r: -7,
     d: "Designed, built and deployed a responsive community membership website serving 2,000+ users. I manage its hosting, deployments, version control and payment redirection." },
-  { t: "People's Choice", y: "2026", p: "INSPIRE 2026", shape: "", c: "--accent", r: -5,
-    d: "My generative AI research won the People's Choice award at INSPIRE 2026. In it I use retrieval-augmented generation to ground model responses for an AI-driven historical persona platform, and benchmark generative models across speech, image and video, including 4 zero-shot voice-cloning models." },
+  { t: "People's Choice", y: "2026", p: "INSPIRE · Hibiki-AI", shape: "round", c: "--gold", r: -5,
+    img: { src: "media/inspire-award.jpg", alt: "People's Choice Award certificate for Hibiki-AI at the 2026 INSPIRE Convening" },
+    d: "Hibiki-AI, my generative AI research project, won the People's Choice Award at the 2026 INSPIRE Convening (Learning Lab, “Reinventing Higher Education”). It's an AI-driven historical persona platform: I use retrieval-augmented generation to ground the personas' answers in sources, and benchmark generative models across speech, image and video, including 4 zero-shot voice-cloning models." },
   { t: "80% Faster", y: "2025", p: "Umida Ag · Data", shape: "round", c: "--stamp-red", r: 7,
     d: "Built Python automation scripts that cut reporting time by 80%. Also cleaned, transformed and validated operational healthcare datasets as a Digital Health intern at Valley Children's Hospital." },
   { t: "Dean's List", y: "2025", p: "+ Cybersecurity cert", shape: "oval", c: "--stamp-green", r: -3,
@@ -848,7 +852,7 @@ function showStamp(i) {
   const pos = stampOrder.indexOf(i);
   grid.querySelectorAll('.stamp').forEach((el, k) => el.classList.toggle('sel', k === pos));
   rec.innerHTML = `<div><span class="label">Entry ${String(pos + 1).padStart(2, '0')} · ${s.y}</span></div>
-    <div><h3>${s.t}</h3><p>${s.d}</p></div>`;
+    <div><h3>${s.t}</h3><p>${s.d}</p>${s.img ? `<figure class="recimg"><img src="${s.img.src}" alt="${s.img.alt}" loading="lazy"></figure>` : ''}</div>`;
 }
 // Stamps render in the order that suits the visitor's track (titles listed in TRACKS below).
 let stampOrder = STAMPS.map((_, i) => i);
@@ -897,13 +901,13 @@ const CMDS = {
     ['2026–now', 'AI & Innovation Intern, Lyles Construction Group (C#, React)'],
     ['now', 'Website & Social Media Intern, Madera K-16 Collaborative, Fresno State'],
     ['2026', 'Full Stack Developer Intern, F3 Innovate (Svelte, FastAPI)'],
-    ['2026–now', 'Research Assistant, Generative AI, Fresno State (People\'s Choice, INSPIRE 2026)'],
+    ['2026–now', 'Research Assistant, Generative AI, Fresno State (Hibiki-AI: People\'s Choice, INSPIRE 2026)'],
     ['2025', 'Digital Health Intern, Valley Children\'s Hospital'],
     ['2025', 'Computer Vision Research Assistant, Fresno State'],
     ['2025', 'Data Analyst Intern, Umida Ag & Terra Tech'],
   ].map(([a, b]) => `<span class="p">${a.padEnd(10)}</span>${b}`).join('\n'),
-  projects: () => `<span class="p">survey-apps</span>           2 survey apps + dashboards for Lyles subsidiaries;\n                      emails go out only once the work order or project has closed\n<span class="p">service-pipeline</span>      ERP + Microsoft Graph, every 15 minutes\n<span class="p">readiness-engine</span>      Svelte + FastAPI + PostgreSQL, TRL/CRL scoring\n<span class="p">evenstar-trading</span>      membership site, 2,000+ users\n<span class="p">personal-ios</span>          my own iPhone apps in Swift + SwiftUI\n<span class="p">vision-3d</span>             YOLOv8 + depth cameras, 91% accuracy\n<span class="d">see the passport stamps for details</span>`,
-  now: () => `AI & Innovation Intern at Lyles: full web apps in C# and React, data pipelines\nbuilding my own iPhone apps in Swift on the side\nWebsite & Social Media Intern, Madera K-16 Collaborative\nresearching RAG and generative AI at Fresno State (just won People's Choice at INSPIRE 2026)`,
+  projects: () => `<span class="p">survey-apps</span>           2 survey apps + dashboards for Lyles subsidiaries;\n                      emails go out only once the work order or project has closed\n<span class="p">service-pipeline</span>      ERP + Microsoft Graph, every 15 minutes\n<span class="p">readiness-engine</span>      Svelte + FastAPI + PostgreSQL, TRL/CRL scoring\n<span class="p">evenstar-trading</span>      membership site, 2,000+ users\n<span class="p">personal-ios</span>          my own iPhone apps in Swift + SwiftUI\n<span class="p">hibiki-ai</span>             AI historical personas with RAG, People's Choice @ INSPIRE 2026\n<span class="p">vision-3d</span>             YOLOv8 + depth cameras, 91% accuracy\n<span class="d">see the passport stamps for details</span>`,
+  now: () => `AI & Innovation Intern at Lyles: full web apps in C# and React, data pipelines\nbuilding my own iPhone apps in Swift on the side\nWebsite & Social Media Intern, Madera K-16 Collaborative\nresearching generative AI at Fresno State: Hibiki-AI just won People's Choice at INSPIRE 2026`,
   hire: () => `email:    rowanelansary123@gmail.com\nlinkedin: linkedin.com/in/rowan-elansary\ngithub:   github.com/rowanhosam\nstatus:   <span class="p">available for a Summer 2027 internship (May–Aug)</span>`,
   sudo: () => `nice try. you need clearance ROOT. check the ID card.`,
   ls: () => `about.txt  skills/  projects/  stamps/  secret.txt`,
@@ -954,7 +958,7 @@ const ROLES = {
     briefLabel: 'In 30 seconds',
     brief: [
       ['What I do', 'Full web apps with React and C#, plus FastAPI and Node APIs and SQL, shipped to production on Azure. Strong in data structures and algorithms, in C++.'],
-      ['Recent impact', 'People’s Choice award at INSPIRE 2026 for my generative AI research. At Lyles I built 2 survey apps with tracking dashboards for its subsidiary companies, plus a 15-minute ERP data pipeline, and I contribute to projects across the department.'],
+      ['Recent impact', 'People’s Choice Award at the 2026 INSPIRE Convening for Hibiki-AI, my generative AI research. At Lyles I built 2 survey apps with tracking dashboards for its subsidiary companies, plus a 15-minute ERP data pipeline, and I contribute to projects across the department.'],
       ['Availability', 'Summer 2027 internship (May–Aug). CS B.S./M.S. at Fresno State, graduating December 2027.'],
     ],
   },
@@ -984,28 +988,28 @@ const TRACKS = {
   fullstack: {
     name: 'Full stack', word: 'full-stack apps',
     chips: ['C++ · DSA', 'React', 'C#', 'TypeScript', 'Node.js', 'SQL', 'Python', 'Java', 'Azure', 'Git'],
-    stamps: ['2 Apps in Prod', 'Readiness Engine', '2,000+ Users', '15-Min Pipeline', '4 Vulns Fixed', "People's Choice"],
+    stamps: ['2 Apps in Prod', 'Readiness Engine', "People's Choice", '2,000+ Users', '15-Min Pipeline', '4 Vulns Fixed'],
     what: 'Full web apps with React and C#, plus FastAPI and Node APIs and SQL, shipped to production on Azure. Strong in data structures and algorithms, in C++.',
     ask: 'When are you available for an internship?',
   },
   frontend: {
     name: 'Front end', word: 'front ends',
     chips: ['React', 'TypeScript', 'JavaScript', 'HTML / CSS', 'Tailwind', 'Svelte', 'Responsive UI', 'C++ · DSA', 'Git', 'Azure'],
-    stamps: ['2,000+ Users', '2 Apps in Prod', 'Readiness Engine', 'My iOS Apps', 'Web + Social', "People's Choice"],
+    stamps: ['2,000+ Users', '2 Apps in Prod', "People's Choice", 'Readiness Engine', 'My iOS Apps', 'Web + Social'],
     what: 'Responsive web interfaces in React and Tailwind (and Svelte), from a membership site with 2,000+ users to production survey dashboards. Strong in data structures and algorithms, in C++.',
     ask: 'Which front-end project are you proudest of?',
   },
   backend: {
     name: 'Back end', word: 'back ends',
     chips: ['C++ · DSA', 'C#', 'Python', 'Java', 'Node.js', 'FastAPI', 'SQL', 'REST APIs', 'Azure', 'Docker'],
-    stamps: ['15-Min Pipeline', '4 Vulns Fixed', '2 Apps in Prod', 'Readiness Engine', '80% Faster', "People's Choice"],
+    stamps: ['15-Min Pipeline', '4 Vulns Fixed', "People's Choice", '2 Apps in Prod', 'Readiness Engine', '80% Faster'],
     what: 'APIs and data in C#, Node and FastAPI on SQL: an ERP pipeline that runs every 15 minutes, JWT auth and access control, and 4 vulnerabilities fixed before production. Strong in data structures and algorithms, in C++.',
     ask: 'How does your survey app decide when to send emails?',
   },
   design: {
     name: 'App / UX design', word: 'app designs',
     chips: ['SwiftUI', 'iOS', 'React', 'Tailwind', 'Responsive UI', 'HTML / CSS', 'TypeScript', 'Web content', 'C++ · DSA', 'Git'],
-    stamps: ['My iOS Apps', 'Web + Social', '2,000+ Users', '2 Apps in Prod', 'Readiness Engine', "People's Choice"],
+    stamps: ['My iOS Apps', 'Web + Social', "People's Choice", '2,000+ Users', '2 Apps in Prod', 'Readiness Engine'],
     what: 'Apps people enjoy using: my own iPhone apps in SwiftUI, the website and social media for the Madera K-16 Collaborative, and the design of this site.',
     ask: 'What apps have you designed?',
   },
@@ -1013,8 +1017,8 @@ const TRACKS = {
     name: 'AI / ML', word: 'AI tools',
     chips: ['Python', 'PyTorch', 'RAG', 'YOLOv8', 'C++ · DSA', 'SQL', 'PySpark', 'BigQuery', 'Docker', 'Git'],
     stamps: ["People's Choice", '91% Detection', '15-Min Pipeline', '80% Faster', '2 Apps in Prod', 'Readiness Engine'],
-    what: 'Generative AI research that won People’s Choice at INSPIRE 2026, using RAG and model benchmarking, plus a YOLOv8 vision system at 91% accuracy, in Python and PyTorch.',
-    ask: 'What was your INSPIRE research about?',
+    what: 'Hibiki-AI, my generative AI research, won People’s Choice at the 2026 INSPIRE Convening. It uses RAG and model benchmarking, plus a YOLOv8 vision system at 91% accuracy, in Python and PyTorch.',
+    ask: 'What is Hibiki-AI?',
   },
 };
 const DEFAULT_CHIPS = ['C++ · DSA', 'Python', 'Java', 'TypeScript', 'C#', 'React', 'Node.js', 'SQL', 'Azure', 'Git'];

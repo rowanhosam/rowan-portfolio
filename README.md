@@ -27,7 +27,7 @@ Hiring for a specific role? Open the version built for it:
 | 🎥 | **Talking intro** | A full-body video introduction with the background removed, standing directly on the page, with word-by-word captions. Plays once on arrival; replay with sound on demand. |
 | 💬 | **Ask me anything** | An AI assistant answers visitors' questions in the speech bubble, using only facts from my CV. Limited to 6 questions per visitor. |
 | 🪪 | **Lanyard ID card** | Grab it, swing it, throw it. A physics-simulated lanyard with a 3D card that flips, catches the light with a holographic foil and clacks when it swings hard. |
-| 🛂 | **Passport stamps** | Achievements as ink stamps: production apps, a 15-minute data pipeline, a People's Choice award at INSPIRE 2026 and more. Click one to read the entry. |
+| 🛂 | **Passport stamps** | Achievements as ink stamps: production apps, a 15-minute data pipeline, a People's Choice Award at the 2026 INSPIRE Convening for my research project Hibiki-AI, and more. Click one to read the entry. |
 | ⌨️ | **Terminal** | Type `help`, `experience`, `projects` or `skills`, or just ask a question. Try `sudo`. |
 
 ## How it's built
