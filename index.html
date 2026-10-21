@@ -45,11 +45,23 @@ body {
 
 /* Role-based layout: sections reorder for the visitor's role (set on <html data-role>) */
 .top { order: 0; } .hero { order: 1; } .facts { order: 2; } .brief { order: 3; }
-#pass { order: 4; } #stamps { order: 5; } #terminal { order: 6; } #contact { order: 9; }
+#pass { order: 4; } #stamps { order: 5; } #skills { order: 6; } #terminal { order: 7; } #contact { order: 9; }
 :root[data-role="recruiter"] #stamps { order: 4; }
-:root[data-role="recruiter"] #pass { order: 5; }
+:root[data-role="recruiter"] #skills { order: 5; }
+:root[data-role="recruiter"] #pass { order: 6; }
 :root[data-role="engineer"] #terminal { order: 4; }
-:root[data-role="engineer"] #pass { order: 6; }
+:root[data-role="engineer"] #skills { order: 5; }
+:root[data-role="engineer"] #stamps { order: 6; }
+:root[data-role="engineer"] #pass { order: 7; }
+
+.skillgrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.skillcard { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; min-width: 0; }
+.skillcard h3 { font-size: 1.02rem; margin-bottom: 12px; }
+.chipset { display: flex; flex-wrap: wrap; gap: 6px; }
+.chipset span { font: 500 .84rem/1.3 var(--font-body); border: 1px solid var(--line); background: var(--bg); border-radius: 99px; padding: 5px 11px; }
+.chipset small { color: var(--muted); font-size: .74rem; }
+@media (max-width: 1000px) { .skillgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .skillgrid { grid-template-columns: minmax(0, 1fr); } }
 
 .visitor { border: 1px solid var(--line); background: var(--paper); border-radius: 99px; padding: 6px 12px; cursor: pointer;
   font: 600 .7rem var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
@@ -279,7 +291,7 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
   <header class="top">
     <span class="label">Rowan Elansary · Full-Stack Engineer</span>
     <button type="button" class="visitor" id="visitorChip" title="Change how the site is laid out for you">Visitor · <b id="visitorRole">Guest</b> · change</button>
-    <nav><a href="#pass">Pass</a><a href="#stamps">Stamps</a><a href="#terminal">Terminal</a><a href="#contact">Contact</a></nav>
+    <nav><a href="#pass">Pass</a><a href="#stamps">Stamps</a><a href="#skills">Skills</a><a href="#terminal">Terminal</a><a href="#contact">Contact</a></nav>
   </header>
 
   <!-- HERO: talking full-body cut-out -->
@@ -388,6 +400,15 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
       <div class="stamps" id="stampGrid"></div>
       <div class="record" id="record" aria-live="polite"></div>
     </div>
+  </section>
+
+  <!-- SKILLS: everything on the resume -->
+  <section class="block" id="skills">
+    <div class="head">
+      <div><span class="label">Toolbox</span><h2>Skills</h2></div>
+      <p>Everything I work with, grouped the way I use it. Notes show where a tool is from when it isn't part of my everyday work.</p>
+    </div>
+    <div class="skillgrid" id="skillGrid"></div>
   </section>
 
   <!-- TERMINAL -->
@@ -622,19 +643,28 @@ STAMPS.forEach((s, i) => {
 });
 showStamp(0);
 
+// ---------- skills ----------
+// "Name|note" shows the note in small text next to the skill.
+const SKILLS = [
+  ['Languages', ['Python|1+ yrs', 'C#', 'Java', 'C++', 'JavaScript', 'TypeScript', 'SQL', 'Swift|personal apps', 'Objective-C', 'HTML', 'CSS']],
+  ['Back end', ['C#', 'REST APIs', 'Node.js', 'Express', 'FastAPI', 'Async services', 'JWT authentication', 'ERP integrations', 'Microsoft Graph API']],
+  ['Front end & mobile', ['React', 'Svelte|F3 Innovate', 'Tailwind CSS', 'Responsive UI', 'SwiftUI|personal apps', 'iOS', 'macOS']],
+  ['Data', ['SQL Server', 'PostgreSQL', 'BigQuery', 'SQLAlchemy', 'Data modeling', 'Data pipelines', 'Apache Spark (PySpark)', 'Data validation']],
+  ['AI & machine learning', ['PyTorch', 'Computer vision (YOLOv8)', 'RAG', 'Generative AI evaluation']],
+  ['Cloud & DevOps', ['Microsoft Azure', 'Docker', 'Linux (Ubuntu)', 'Git', 'GitHub', 'GitHub Projects']],
+  ['Practices', ['SDLC', 'Agile (2-week sprints)', 'Code reviews', 'Testing', 'Debugging production issues', 'Vulnerability remediation', 'AI-assisted dev (Copilot, Cursor, Claude Code)']],
+  ['Web & social media', ['Website management', 'Social media content', 'Hosting & deployments']],
+];
+document.getElementById('skillGrid').innerHTML = SKILLS.map(([cat, items]) => `<div class="skillcard"><h3>${esc(cat)}</h3><div class="chipset">${
+  items.map(s => { const [name, note] = s.split('|'); return `<span>${esc(name)}${note ? ` <small>${esc(note)}</small>` : ''}</span>`; }).join('')
+}</div></div>`).join('');
+
 // ---------- terminal ----------
 const out = document.getElementById('out'), cmd = document.getElementById('cmd');
 const CMDS = {
   help: () => `available commands:\n  <span class="p">whoami</span>      who is this\n  <span class="p">skills</span>      what I can do\n  <span class="p">stack</span>       tools I use\n  <span class="p">experience</span>  where I've worked\n  <span class="p">projects</span>    things I've built\n  <span class="p">now</span>         what I'm working on\n  <span class="p">hire</span>        how to reach me\n  <span class="p">ask</span> …       ask me anything (AI, based on my CV, 6 a minute)\n  <span class="p">clear</span>       wipe the screen`,
   whoami: () => `Rowan Elansary. Full-stack engineer and CS student at Fresno State.\n1+ years across 5 internships: production web apps, APIs, data pipelines, AI research and web + social media.`,
-  skills: () => [
-    ['Front end', 'React, Tailwind, responsive UI, SwiftUI, Svelte (F3 Innovate)'],
-    ['Back end', 'C#, REST APIs, FastAPI, Node/Express, async services, JWT auth'],
-    ['Data', 'PostgreSQL, SQL Server, BigQuery, PySpark, pipelines'],
-    ['AI / ML', 'PyTorch, YOLOv8, RAG, generative model evaluation'],
-    ['Cloud', 'Azure, Docker, Linux, Git, Agile sprints, code review'],
-    ['Web + social', 'website management, social media content'],
-  ].map(([a, b]) => `<span class="p">${a.padEnd(14)}</span><span class="d">${b}</span>`).join('\n'),
+  skills: () => SKILLS.map(([a, items]) => `<span class="p">${a.padEnd(15)}</span><span class="d">${items.map(s => s.replace('|', ' ')).join(', ')}</span>`).join('\n'),
   stack: () => `c# · python · java · c++ · javascript · typescript · sql · swift\nreact · tailwind · svelte · fastapi · node · express\npostgresql · sql server · bigquery · sqlalchemy · pyspark\nazure · docker · linux · git`,
   experience: () => [
     ['2026–now', 'AI & Innovation Intern, Lyles Construction Group (C#, React)'],
