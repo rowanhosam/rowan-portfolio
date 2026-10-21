@@ -178,11 +178,17 @@ section.block { padding-block: 72px; border-top: 1px solid var(--line); }
 
 /* ID card */
 .cardstage { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 48px; align-items: center; }
-.scene { perspective: 1400px; display: grid; place-items: center; padding: 24px 0; }
-.lanyard { width: 2px; height: 70px; background: var(--muted); margin: 0 auto -6px; opacity: .5; }
-.idcard { all: unset; cursor: pointer; display: block; width: min(460px, 100%); aspect-ratio: 85.6 / 53.98; position: relative;
-  transform-style: preserve-3d; transition: transform .8s cubic-bezier(.2, .8, .2, 1);
-  transform: rotateX(var(--rx, 0deg)) rotateY(calc(var(--ry, 0deg) + var(--flip, 0deg))); }
+/* Lanyard: the rope is drawn on a canvas; the card hangs from its end (positioned by script each frame) */
+.scene { position: relative; height: 520px; min-width: 0; touch-action: pan-y; }
+.scene canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.hanger { position: absolute; left: 0; top: 0; width: 360px; transform-origin: 50% 0; perspective: 1200px; will-change: transform; }
+.tilt { transform-style: preserve-3d; transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); }
+.clip { position: absolute; left: 50%; top: -16px; translate: -50% 0; width: 34px; height: 26px; z-index: 3; border-radius: 8px 8px 6px 6px;
+  background: linear-gradient(180deg, #e6e9ee, #9aa1ad); box-shadow: inset 0 0 0 2px #7d8592; }
+.clip::after { content: ""; position: absolute; left: 50%; top: 6px; translate: -50% 0; width: 14px; height: 6px; border-radius: 4px; background: #5b6270; }
+.idcard { all: unset; cursor: grab; display: block; width: 100%; aspect-ratio: 85.6 / 53.98; position: relative; touch-action: none; user-select: none; -webkit-user-select: none;
+  transform-style: preserve-3d; transition: transform .8s cubic-bezier(.2, .8, .2, 1); transform: rotateY(var(--flip, 0deg)); }
+.idcard.dragging { cursor: grabbing; }
 .idcard.flipped { --flip: 180deg; }
 .idcard:focus-visible { outline: 2px solid var(--accent); outline-offset: 8px; border-radius: 18px; }
 .face { position: absolute; inset: 0; border-radius: 18px; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden;
@@ -341,12 +347,14 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
   <section class="block" id="pass">
     <div class="head">
       <div><span class="label">Credential</span><h2>My ID card</h2></div>
-      <p>Tilt it, then flip it. The back shows my clearances. The card is drawn to CR80 proportions, the same 85.60 × 53.98 mm as the one in your wallet.</p>
+      <p>Grab it, swing it, throw it, then click to flip it. The back shows my clearances. The card is drawn to CR80 proportions, the same 85.60 × 53.98 mm as the one in your wallet.</p>
     </div>
     <div class="cardstage">
       <div class="scene" id="scene">
-        <div>
-          <div class="lanyard"></div>
+        <canvas id="ropeCanvas" aria-hidden="true"></canvas>
+        <div class="hanger" id="hanger">
+          <div class="clip" aria-hidden="true"></div>
+          <div class="tilt" id="tilt">
           <button class="idcard" id="idcard" type="button" aria-label="ID card, front. Press to flip.">
             <div class="face front">
               <div class="org"><span>ACCESS PASS</span><span>№ RE-0008</span></div>
@@ -376,14 +384,15 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
               <div class="backfoot">IF FOUND, HIRE THE HOLDER · github.com/rowanhosam</div>
             </div>
           </button>
+          </div>
         </div>
       </div>
       <div class="cardside">
         <span class="label">How to use</span>
         <ul>
-          <li><kbd>↻</kbd><span>Move your pointer over the card to tilt it and catch the foil.</span></li>
+          <li><kbd>✋</kbd><span>Grab the card and drag it around. Let go mid-swing to throw it.</span></li>
           <li><kbd>⏎</kbd><span>Click, tap or press Enter to flip it over.</span></li>
-          <li><kbd>📷</kbd><span>Add <code>photo.jpg</code> beside the page to replace the initials.</span></li>
+          <li><kbd>✦</kbd><span>Watch the foil catch the light as it spins.</span></li>
         </ul>
         <button class="flipbtn" type="button" id="flipBtn">Flip card</button>
       </div>
@@ -577,21 +586,136 @@ askForm.onsubmit = async e => {
 
 // ---------- ID card ----------
 const card = document.getElementById('idcard'), scene = document.getElementById('scene');
+const hanger = document.getElementById('hanger'), tilt = document.getElementById('tilt');
+const rope = document.getElementById('ropeCanvas'), ctx = rope.getContext('2d');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let dragMoved = false;
 function flip() {
   card.classList.toggle('flipped');
   card.setAttribute('aria-label', `ID card, ${card.classList.contains('flipped') ? 'back' : 'front'}. Press to flip.`);
 }
-card.onclick = flip;
+card.onclick = e => { if (dragMoved) { dragMoved = false; e.preventDefault(); return; } flip(); };
 document.getElementById('flipBtn').onclick = flip;
+
+// Lanyard physics: a verlet rope pinned at the top; its last point holds the card's clip,
+// and one heavier point (the card's centre) hangs below it. The card's angle follows them.
+const ROPE_LEN = 150, SEGMENTS = 12, GRAVITY = 1800, STEP = 1 / 60;
+let W = 0, H = 0, cardW = 0, cardH = 0, anchor = { x: 0, y: 14 }, pts = [], C = null;
+let drag = null, swing = { rx: 0, ry: 0 };
+
+function layout() {
+  const width = scene.clientWidth;
+  if (!width || width === W) return;
+  W = width;
+  cardW = Math.min(360, W * 0.86);
+  cardH = cardW * 53.98 / 85.6;
+  H = Math.round(anchor.y + ROPE_LEN + cardH + 60);
+  scene.style.height = H + 'px';
+  hanger.style.width = cardW + 'px';
+  const dpr = devicePixelRatio || 1;
+  rope.width = W * dpr; rope.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  anchor.x = W / 2;
+  const seg = ROPE_LEN / SEGMENTS;
+  pts = Array.from({ length: SEGMENTS + 1 }, (_, i) => ({ x: anchor.x, y: anchor.y + i * seg, px: anchor.x, py: anchor.y + i * seg }));
+  const end = pts[SEGMENTS];
+  C = { x: end.x, y: end.y + cardH / 2, px: end.x, py: end.y + cardH / 2 };
+  if (!reduce) C.px += 3; // a small swing as it comes into view
+  render();
+}
+
+function step() {
+  const g = GRAVITY * STEP * STEP;
+  for (const p of [...pts.slice(1), C]) {
+    if (p === C && drag) continue;
+    const vx = (p.x - p.px) * .992, vy = (p.y - p.py) * .992;
+    p.px = p.x; p.py = p.y; p.x += vx; p.y += vy + g;
+  }
+  if (drag) {
+    // Keep the grab point within the lanyard's reach, then pin the card to it.
+    let tx = drag.tx, ty = drag.ty;
+    const dx = tx - anchor.x, dy = ty - anchor.y, reach = ROPE_LEN + cardH / 2, d = Math.hypot(dx, dy);
+    if (d > reach) { tx = anchor.x + dx / d * reach; ty = anchor.y + dy / d * reach; }
+    C.px = C.x; C.py = C.y; C.x = tx; C.y = ty;
+  }
+  const seg = ROPE_LEN / SEGMENTS;
+  for (let k = 0; k < 24; k++) {
+    pts[0].x = anchor.x; pts[0].y = anchor.y;
+    for (let i = 0; i < SEGMENTS; i++) {
+      const a = pts[i], b = pts[i + 1];
+      const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1, diff = (d - seg) / d;
+      if (i === 0) { b.x -= dx * diff; b.y -= dy * diff; }
+      else { a.x += dx * diff / 2; a.y += dy * diff / 2; b.x -= dx * diff / 2; b.y -= dy * diff / 2; }
+    }
+    // The card is heavier than the strap, so the strap end gives way more than the card does.
+    const e = pts[SEGMENTS], dx = C.x - e.x, dy = C.y - e.y, d = Math.hypot(dx, dy) || 1, diff = (d - cardH / 2) / d;
+    const wCard = drag ? 0 : .25;
+    e.x += dx * diff * (1 - wCard); e.y += dy * diff * (1 - wCard);
+    C.x -= dx * diff * wCard; C.y -= dy * diff * wCard;
+  }
+}
+
+function render() {
+  const e = pts[SEGMENTS];
+  const angle = -Math.atan2(C.x - e.x, C.y - e.y);
+  hanger.style.transform = `translate(${e.x - cardW / 2}px, ${e.y}px) rotate(${angle}rad)`;
+  // Sideways speed spins the card a little in 3D; that also moves the foil highlight.
+  const vx = C.x - C.px, vy = C.y - C.py;
+  swing.ry += (Math.max(-55, Math.min(55, vx * 5)) - swing.ry) * .2;
+  swing.rx += (Math.max(-25, Math.min(25, -vy * 3)) - swing.rx) * .2;
+  tilt.style.setProperty('--ry', swing.ry.toFixed(2) + 'deg');
+  tilt.style.setProperty('--rx', swing.rx.toFixed(2) + 'deg');
+  card.style.setProperty('--mx', (.5 + swing.ry / 110).toFixed(3));
+  card.style.setProperty('--my', (.5 + swing.rx / 60).toFixed(3));
+
+  const css = getComputedStyle(document.documentElement);
+  ctx.clearRect(0, 0, W, H);
+  ctx.lineCap = ctx.lineJoin = 'round';
+  const path = () => {
+    ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < SEGMENTS; i++) ctx.quadraticCurveTo(pts[i].x, pts[i].y, (pts[i].x + pts[i + 1].x) / 2, (pts[i].y + pts[i + 1].y) / 2);
+    ctx.lineTo(e.x, e.y);
+  };
+  path(); ctx.strokeStyle = css.getPropertyValue('--accent'); ctx.lineWidth = 12; ctx.stroke();
+  path(); ctx.strokeStyle = css.getPropertyValue('--paper'); ctx.globalAlpha = .45; ctx.lineWidth = 2; ctx.setLineDash([2, 6]); ctx.stroke();
+  ctx.setLineDash([]); ctx.globalAlpha = 1;
+  ctx.fillStyle = css.getPropertyValue('--ink');
+  ctx.beginPath(); ctx.arc(anchor.x, anchor.y, 6, 0, Math.PI * 2); ctx.fill();
+}
+
+let visible = true, running = false, last = 0, acc = 0;
+function start() { if (!running) { running = true; requestAnimationFrame(loop); } }
+function loop(now) {
+  if (!visible) { last = 0; running = false; return; }
+  acc = Math.min(acc + (last ? (now - last) / 1000 : STEP), STEP * 4); last = now;
+  while (acc >= STEP) { step(); acc -= STEP; }
+  render();
+  requestAnimationFrame(loop);
+}
+
+const toScene = ev => { const r = scene.getBoundingClientRect(); return { x: ev.clientX - r.left, y: ev.clientY - r.top }; };
+card.addEventListener('pointerdown', ev => {
+  if (reduce || ev.button > 0) return;
+  const p = toScene(ev);
+  drag = { ox: p.x - C.x, oy: p.y - C.y, tx: C.x, ty: C.y, sx: p.x, sy: p.y };
+  dragMoved = false;
+  try { card.setPointerCapture(ev.pointerId); } catch {}
+  card.classList.add('dragging');
+});
+card.addEventListener('pointermove', ev => {
+  if (!drag) return;
+  const p = toScene(ev);
+  drag.tx = p.x - drag.ox; drag.ty = p.y - drag.oy;
+  if (Math.hypot(p.x - drag.sx, p.y - drag.sy) > 6) dragMoved = true;
+});
+const endDrag = () => { drag = null; card.classList.remove('dragging'); };
+card.addEventListener('pointerup', endDrag);
+card.addEventListener('pointercancel', endDrag);
+
+new ResizeObserver(layout).observe(scene);
+layout();
 if (!reduce) {
-  scene.addEventListener('pointermove', e => {
-    const r = card.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-    card.style.setProperty('--ry', `${(x - .5) * 22}deg`); card.style.setProperty('--rx', `${(.5 - y) * 16}deg`);
-    card.style.setProperty('--mx', x.toFixed(3)); card.style.setProperty('--my', y.toFixed(3));
-  });
-  scene.addEventListener('pointerleave', () => { card.style.setProperty('--ry', '0deg'); card.style.setProperty('--rx', '0deg'); });
+  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (visible) start(); }).observe(scene);
+  start();
 }
 // barcode generated from the holder's name
 const bc = document.getElementById('barcode');
