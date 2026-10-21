@@ -44,3 +44,8 @@ reorders its sections and swaps the intro button, ask-box hint and brief for tha
 (`ROLES` in the page script). The "Visitor · change" chip reopens it.
 
 Share a link ending in `#recruiter`, `#engineer` or `#curious` to skip the gate with that role.
+
+Recruiters also pick what they're hiring for (full stack, front end, back end, app/UX design,
+AI/ML). That reorders the stamps, swaps the card-back skills, the "What I do" line, the ask-box
+hint and the rotating headline word (`TRACKS` in the page script). Track links:
+`#recruiter-fullstack`, `#recruiter-frontend`, `#recruiter-backend`, `#recruiter-design`, `#recruiter-ai`.

@@ -5,7 +5,10 @@ Edit this file to change what the chat assistant knows. Lines starting with
 
 ## Basics
 - Name: Rowan Elansary
-- Role: Full-stack software engineer and Computer Science student
+- Role: Software engineer (full stack at the core) and Computer Science student
+- Looking for: a Summer 2027 internship, mid-May to late August, in software
+  engineering: full stack, front end, back end, mobile and app design, or AI.
+  Enjoys exploring across the stack.
 - Location: Fresno, CA
 - Email: rowanelansary123@gmail.com
 - LinkedIn: linkedin.com/in/rowan-elansary

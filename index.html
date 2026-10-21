@@ -168,6 +168,19 @@ button { font: inherit; color: inherit; }
 .bubble .dots i:nth-child(3) { animation-delay: .3s; }
 .hero + .facts { display: flex; gap: 28px 40px; flex-wrap: wrap; padding-block: 22px 56px; border-top: 1px solid var(--line); }
 .facts div { display: grid; gap: 6px; }
+.lookfor { order: 2; margin: -32px 0 0; padding-bottom: 40px; max-width: 70ch; font-size: 1.05rem; }
+.lookfor .label { margin-right: 10px; color: var(--accent); }
+.rotline { font: 600 clamp(1.15rem, 2.2vw, 1.5rem)/1.3 var(--font-display); margin: 14px 0 0; letter-spacing: -.01em; }
+.rot { color: var(--accent); }
+.caret { display: inline-block; width: 2px; height: 1em; margin-left: 3px; vertical-align: -.12em; background: var(--accent); animation: blink 1s steps(1) infinite; }
+.tracks { border: 0; padding: 0; margin: 0 0 18px; display: flex; flex-wrap: wrap; gap: 8px; }
+.tracks legend { margin-bottom: 10px; }
+.gatecard:not(:has(input[name="role"][value="recruiter"]:checked)) .tracks { display: none; }
+.trk { cursor: pointer; }
+.trk input { position: absolute; opacity: 0; pointer-events: none; }
+.trk span { display: inline-block; border: 1px solid var(--line); border-radius: 99px; padding: 8px 14px; font: 600 .85rem var(--font-body); }
+.trk input:checked + span { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.trk input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
 .facts b { font: 700 1.05rem var(--font-display); }
 
 /* sections */
@@ -297,7 +310,7 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
 
 <div class="wrap">
   <header class="top">
-    <span class="label">Rowan Elansary · Full-Stack Engineer</span>
+    <span class="label">Rowan Elansary · Software Engineer</span>
     <button type="button" class="visitor" id="visitorChip" title="Change how the site is laid out for you">Visitor · <b id="visitorRole">Guest</b> · change</button>
     <nav><a href="#pass">Pass</a><a href="#stamps">Stamps</a><a href="#skills">Skills</a><a href="#terminal">Terminal</a><a href="#contact">Contact</a></nav>
   </header>
@@ -307,7 +320,8 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
     <div class="bigname" aria-hidden="true">ROWAN</div>
     <div class="intro">
       <span class="label" id="introLabel">Access pass · Holder</span>
-      <h1><em>Full-stack</em><br>Engineer.</h1>
+      <h1><em>Software</em><br>Engineer.</h1>
+      <p class="rotline" aria-live="off">Building <span class="rot" id="rot">full-stack apps</span><i class="caret" aria-hidden="true"></i></p>
       <p>React up front, C#, Node and FastAPI behind it, SQL underneath, and Swift for my own iPhone apps. I build apps that go all the way to production, plus AI research on the side.</p>
       <div class="ctas"><a class="primary" id="mainCta" href="#stamps">Explore work →</a><a href="#contact">Let's talk</a></div>
     </div>
@@ -338,6 +352,7 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
     <div><span class="label">Studying</span><b>CS B.S./M.S., Fresno State</b></div>
     <div><span class="label">Available</span><b>Summer 2027 internship, May–Aug</b></div>
   </div>
+  <p class="lookfor"><span class="label">Looking for</span>A Summer 2027 internship, mid-May to late August, in software engineering: full stack, front end, back end, mobile and app design, or AI.</p>
 
   <!-- Role brief: filled in for the visitor's chosen role -->
   <section class="brief" id="brief">
@@ -363,7 +378,7 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
               <div class="photo"><b>RE</b><img src="media/photo.png" alt="" onerror="this.remove()"></div>
               <div class="fields">
                 <div class="nm">Rowan<br>Elansary</div>
-                <div class="rl">Full-Stack Engineer</div>
+                <div class="rl">Software Engineer</div>
                 <div class="kv">
                   <div><span>Clearance</span><strong>ROOT</strong></div>
                   <div><span>Issued</span><strong>2026-10</strong></div>
@@ -379,7 +394,7 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
               <div class="backbody">
                 <div class="sig">Rowan Elansary</div>
                 <div class="barcode" id="barcode"></div>
-                <div class="clear"><b>CLEARANCES</b><i class="key">C++ · DSA</i><i>Python</i><i>Java</i><i>TypeScript</i><i>C#</i><i>React</i><i>Node.js</i><i>SQL</i><i>Azure</i><i>Git</i></div>
+                <div class="clear" id="clearChips"></div>
               </div>
               <div class="backfoot">IF FOUND, HIRE THE HOLDER · github.com/rowanhosam</div>
             </div>
@@ -465,6 +480,14 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
         <label class="role"><input type="radio" name="role" value="recruiter" checked><span><b>Recruiter</b><small>Impact, experience and how to reach me, first.</small><i>Clearance · HR-VIEW</i></span></label>
         <label class="role"><input type="radio" name="role" value="engineer"><span><b>Engineer</b><small>The stack, the terminal and how this site works.</small><i>Clearance · DEV-READ</i></span></label>
         <label class="role"><input type="radio" name="role" value="curious"><span><b>Just curious</b><small>The fun parts. Flip, ask and poke around.</small><i>Clearance · GUEST</i></span></label>
+      </fieldset>
+      <fieldset class="tracks">
+        <legend class="label">Hiring for?</legend>
+        <label class="trk"><input type="radio" name="track" value="fullstack" checked><span>Full stack</span></label>
+        <label class="trk"><input type="radio" name="track" value="frontend"><span>Front end</span></label>
+        <label class="trk"><input type="radio" name="track" value="backend"><span>Back end</span></label>
+        <label class="trk"><input type="radio" name="track" value="design"><span>App / UX design</span></label>
+        <label class="trk"><input type="radio" name="track" value="ai"><span>AI / ML</span></label>
       </fieldset>
       <label for="gateName" class="label">Your name (optional)</label>
       <input id="gateName" class="gatename" maxlength="40" placeholder="e.g. Sam">
@@ -784,20 +807,29 @@ const STAMPS = [
 const grid = document.getElementById('stampGrid'), rec = document.getElementById('record');
 function showStamp(i) {
   const s = STAMPS[i];
-  grid.querySelectorAll('.stamp').forEach((el, k) => el.classList.toggle('sel', k === i));
-  rec.innerHTML = `<div><span class="label">Entry ${String(i + 1).padStart(2, '0')} · ${s.y}</span></div>
+  const pos = stampOrder.indexOf(i);
+  grid.querySelectorAll('.stamp').forEach((el, k) => el.classList.toggle('sel', k === pos));
+  rec.innerHTML = `<div><span class="label">Entry ${String(pos + 1).padStart(2, '0')} · ${s.y}</span></div>
     <div><h3>${s.t}</h3><p>${s.d}</p></div>`;
 }
-STAMPS.forEach((s, i) => {
-  const b = document.createElement('button');
-  b.type = 'button';
-  b.className = `stamp ${s.shape} ${s.example ? 'example' : ''}`;
-  b.style.setProperty('--c', `var(${s.c})`); b.style.setProperty('--r', `${s.r}deg`);
-  b.innerHTML = `<div><div class="y">★ ${s.y} ★</div><div class="t">${s.t}</div><div class="p">${s.p}</div></div>`;
-  b.onclick = () => showStamp(i);
-  grid.appendChild(b);
-});
-showStamp(0);
+// Stamps render in the order that suits the visitor's track (titles listed in TRACKS below).
+let stampOrder = STAMPS.map((_, i) => i);
+function renderStamps(titles) {
+  stampOrder = titles ? titles.map(t => STAMPS.findIndex(s => s.t === t)).filter(i => i >= 0) : STAMPS.map((_, i) => i);
+  STAMPS.forEach((_, i) => { if (!stampOrder.includes(i)) stampOrder.push(i); });
+  grid.innerHTML = '';
+  stampOrder.forEach(i => {
+    const s = STAMPS[i], b = document.createElement('button');
+    b.type = 'button';
+    b.className = `stamp ${s.shape}`;
+    b.style.setProperty('--c', `var(${s.c})`); b.style.setProperty('--r', `${s.r}deg`);
+    b.innerHTML = `<div><div class="y">★ ${s.y} ★</div><div class="t">${s.t}</div><div class="p">${s.p}</div></div>`;
+    b.onclick = () => showStamp(i);
+    grid.appendChild(b);
+  });
+  showStamp(stampOrder[0]);
+}
+renderStamps();
 
 // ---------- skills ----------
 // "Name|note" shows the note in small text next to the skill.
@@ -906,22 +938,98 @@ const ROLES = {
     ],
   },
 };
+const motionOK = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+// What a recruiter is hiring for reshapes the page: headline word, stamp order, card-back skills,
+// the "What I do" line and the ask-box hint. Every item is real work from the resume.
+const TRACKS = {
+  fullstack: {
+    name: 'Full stack', word: 'full-stack apps',
+    chips: ['C++ · DSA', 'React', 'C#', 'TypeScript', 'Node.js', 'SQL', 'Python', 'Java', 'Azure', 'Git'],
+    stamps: ['2 Apps in Prod', 'Readiness Engine', '2,000+ Users', '15-Min Pipeline', '4 Vulns Fixed', "People's Choice"],
+    what: 'Full web apps with React and C#, plus FastAPI and Node APIs and SQL, shipped to production on Azure. Strong in data structures and algorithms, in C++.',
+    ask: 'When are you available for an internship?',
+  },
+  frontend: {
+    name: 'Front end', word: 'front ends',
+    chips: ['React', 'TypeScript', 'JavaScript', 'HTML / CSS', 'Tailwind', 'Svelte', 'Responsive UI', 'C++ · DSA', 'Git', 'Azure'],
+    stamps: ['2,000+ Users', '2 Apps in Prod', 'Readiness Engine', 'My iOS Apps', 'Web + Social', "People's Choice"],
+    what: 'Responsive web interfaces in React and Tailwind (and Svelte), from a membership site with 2,000+ users to production survey dashboards. Strong in data structures and algorithms, in C++.',
+    ask: 'Which front-end project are you proudest of?',
+  },
+  backend: {
+    name: 'Back end', word: 'back ends',
+    chips: ['C++ · DSA', 'C#', 'Python', 'Java', 'Node.js', 'FastAPI', 'SQL', 'REST APIs', 'Azure', 'Docker'],
+    stamps: ['15-Min Pipeline', '4 Vulns Fixed', '2 Apps in Prod', 'Readiness Engine', '80% Faster', "People's Choice"],
+    what: 'APIs and data in C#, Node and FastAPI on SQL: an ERP pipeline that runs every 15 minutes, JWT auth and access control, and 4 vulnerabilities fixed before production. Strong in data structures and algorithms, in C++.',
+    ask: 'How does your survey app decide when to send emails?',
+  },
+  design: {
+    name: 'App / UX design', word: 'app designs',
+    chips: ['SwiftUI', 'iOS', 'React', 'Tailwind', 'Responsive UI', 'HTML / CSS', 'TypeScript', 'Web content', 'C++ · DSA', 'Git'],
+    stamps: ['My iOS Apps', 'Web + Social', '2,000+ Users', '2 Apps in Prod', 'Readiness Engine', "People's Choice"],
+    what: 'Apps people enjoy using: my own iPhone apps in SwiftUI, the website and social media for the Madera K-16 Collaborative, and the design of this site.',
+    ask: 'What apps have you designed?',
+  },
+  ai: {
+    name: 'AI / ML', word: 'AI tools',
+    chips: ['Python', 'PyTorch', 'RAG', 'YOLOv8', 'C++ · DSA', 'SQL', 'PySpark', 'BigQuery', 'Docker', 'Git'],
+    stamps: ["People's Choice", '91% Detection', '15-Min Pipeline', '80% Faster', '2 Apps in Prod', 'Readiness Engine'],
+    what: 'Generative AI research that won People’s Choice at INSPIRE 2026, using RAG and model benchmarking, plus a YOLOv8 vision system at 91% accuracy, in Python and PyTorch.',
+    ask: 'What was your INSPIRE research about?',
+  },
+};
+const DEFAULT_CHIPS = ['C++ · DSA', 'Python', 'Java', 'TypeScript', 'C#', 'React', 'Node.js', 'SQL', 'Azure', 'Git'];
+function setChips(list) {
+  document.getElementById('clearChips').innerHTML = '<b>CLEARANCES</b>' + list.map((c, i) => `<i${i ? '' : ' class="key"'}>${esc(c)}</i>`).join('');
+}
+
+// Rotating headline word: types out each kind of work, starting with the visitor's track.
+const rotEl = document.getElementById('rot');
+let rotWords = Object.values(TRACKS).map(t => t.word), rotTimer = null;
+function startRotator(first) {
+  clearTimeout(rotTimer);
+  if (first) rotWords = [first, ...rotWords.filter(w => w !== first)];
+  rotEl.textContent = rotWords[0];
+  if (!motionOK) return;
+  let w = 0;
+  const swap = () => {
+    const next = rotWords[(w + 1) % rotWords.length];
+    let text = rotEl.textContent;
+    const erase = () => {
+      if (text.length) { text = text.slice(0, -1); rotEl.textContent = text; rotTimer = setTimeout(erase, 35); }
+      else type(0);
+    };
+    const type = n => {
+      rotEl.textContent = next.slice(0, n);
+      if (n < next.length) rotTimer = setTimeout(() => type(n + 1), 60);
+      else { w = (w + 1) % rotWords.length; rotTimer = setTimeout(swap, 2200); }
+    };
+    erase();
+  };
+  rotTimer = setTimeout(swap, 2600);
+}
+
 const gate = document.getElementById('gate'), gateForm = document.getElementById('gateForm');
 const gateLog = document.getElementById('gateLog'), granted = document.getElementById('granted');
-const motionOK = !matchMedia('(prefers-reduced-motion: reduce)').matches;
 const wait = ms => new Promise(r => setTimeout(r, motionOK ? ms : 0));
 
-function applyRole(role, visitor = '') {
-  const r = ROLES[role];
+function applyRole(role, visitor = '', track = null) {
+  const r = ROLES[role], t = role === 'recruiter' ? TRACKS[track] || TRACKS.fullstack : null;
+  if (t) track = Object.keys(TRACKS).find(k => TRACKS[k] === t); else track = null;
   document.documentElement.dataset.role = role;
-  document.getElementById('visitorRole').textContent = r.name;
+  document.getElementById('visitorRole').textContent = t ? `${r.name} · ${t.name}` : r.name;
   const cta = document.getElementById('mainCta');
   cta.textContent = r.cta[0]; cta.href = r.cta[1];
-  askInput.placeholder = r.ask;
+  askInput.placeholder = t ? t.ask : r.ask;
   document.getElementById('introLabel').textContent = visitor ? `Access granted · Welcome, ${visitor}` : `Access granted · ${r.clearance}`;
   document.getElementById('briefLabel').textContent = r.briefLabel;
-  document.getElementById('briefGrid').innerHTML = r.brief.map(([h, p]) => `<div><h3>${esc(h)}</h3><p>${esc(p)}</p></div>`).join('');
-  try { sessionStorage.setItem('rowan-visitor', JSON.stringify({ role, visitor })); } catch {}
+  const brief = t ? r.brief.map(([h, p]) => h === 'What I do' ? [h, t.what] : [h, p]) : r.brief;
+  document.getElementById('briefGrid').innerHTML = brief.map(([h, p]) => `<div><h3>${esc(h)}</h3><p>${esc(p)}</p></div>`).join('');
+  setChips(t ? t.chips : DEFAULT_CHIPS);
+  renderStamps(t ? t.stamps : null);
+  startRotator(t ? t.word : null);
+  if (track) gateForm.querySelector(`input[name="track"][value="${track}"]`).checked = true;
+  try { sessionStorage.setItem('rowan-visitor', JSON.stringify({ role, visitor, track })); } catch {}
 }
 
 function openGate() {
@@ -940,10 +1048,11 @@ async function closeGate() {
 gateForm.onsubmit = async e => {
   e.preventDefault();
   const role = new FormData(gateForm).get('role');
+  const track = role === 'recruiter' ? new FormData(gateForm).get('track') : null;
   const visitor = document.getElementById('gateName').value.trim().slice(0, 40);
   gateForm.hidden = true; gateLog.hidden = false; gateLog.textContent = '';
   const lines = [
-    `$ POST /access  role=${role}${visitor ? `  name="${visitor}"` : ''}`,
+    `$ POST /access  role=${role}${track ? `  hiring=${track}` : ''}${visitor ? `  name="${visitor}"` : ''}`,
     '> checking visitor badge… ok',
     `> issuing clearance ${ROLES[role].clearance}`,
     '> rearranging workspace for you…',
@@ -951,7 +1060,7 @@ gateForm.onsubmit = async e => {
   for (const l of lines) { gateLog.append(l + '\n'); await wait(320); }
   const ok = document.createElement('span'); ok.className = 'ok'; ok.textContent = '< 200 ACCESS GRANTED';
   gateLog.append(ok);
-  applyRole(role, visitor);
+  applyRole(role, visitor, track);
   granted.hidden = false;
   await wait(900);
   closeGate();
@@ -962,11 +1071,11 @@ document.getElementById('visitorChip').onclick = openGate;
 
 // First visit opens the gate; a role in the link or earlier in this visit skips it.
 (() => {
-  const fromLink = location.hash.slice(1);
-  if (ROLES[fromLink]) return applyRole(fromLink);
+  const [linkRole, linkTrack] = location.hash.slice(1).split('-');
+  if (ROLES[linkRole]) return applyRole(linkRole, '', linkTrack);
   let saved = null;
   try { saved = JSON.parse(sessionStorage.getItem('rowan-visitor')); } catch {}
-  if (saved && ROLES[saved.role]) return applyRole(saved.role, saved.visitor);
+  if (saved && ROLES[saved.role]) return applyRole(saved.role, saved.visitor, saved.track);
   applyRole('curious');
   openGate();
 })();
