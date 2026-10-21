@@ -87,6 +87,18 @@ button { font: inherit; color: inherit; }
 .vctrl svg { width: 14px; height: 14px; fill: var(--ink); }
 .vctrl #soundBtn.live { background: var(--accent); color: var(--paper); border-color: var(--accent); }
 .vctrl #soundBtn.live svg { fill: var(--paper); }
+.askbox { display: grid; gap: 8px; width: min(320px, 100%); margin-top: 6px; }
+.askrow { display: flex; background: var(--paper); border: 1px solid var(--line); border-radius: 99px; padding: 4px 4px 4px 16px; }
+.askrow:focus-within { border-color: var(--accent); }
+.askrow input { flex: 1; min-width: 0; border: 0; background: transparent; font: 500 .92rem var(--font-body); color: var(--ink); outline: none; }
+.askrow button { border: 0; width: 36px; height: 36px; border-radius: 50%; background: var(--ink); color: var(--bg); cursor: pointer; display: grid; place-items: center; flex: none; }
+.askrow button svg { width: 14px; height: 14px; }
+.askhint { font: 500 .72rem var(--font-mono); color: var(--muted); letter-spacing: .04em; }
+.bubble.ai::before { content: "AI · ROWAN"; display: block; font: 600 .62rem var(--font-mono); letter-spacing: .14em; color: var(--accent); margin-bottom: 4px; }
+.bubble .dots { display: inline-flex; gap: 4px; }
+.bubble .dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: blink 1s infinite; }
+.bubble .dots i:nth-child(2) { animation-delay: .15s; }
+.bubble .dots i:nth-child(3) { animation-delay: .3s; }
 .hero + .facts { display: flex; gap: 28px 40px; flex-wrap: wrap; padding-block: 22px 56px; border-top: 1px solid var(--line); }
 .facts div { display: grid; gap: 6px; }
 .facts b { font: 700 1.05rem var(--font-display); }
@@ -228,6 +240,14 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
         <button type="button" id="soundBtn"><svg viewBox="0 0 16 16"><path d="M2 6h3l4-3v10l-4-3H2z"/><path d="M11 5.5c1 .7 1 4.3 0 5" stroke="currentColor" fill="none"/></svg><span>Hear me</span></button>
         <button type="button" id="playBtn" aria-label="Pause intro"><svg viewBox="0 0 16 16" id="playIcon"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg></button>
       </div>
+      <form class="askbox" id="askForm" autocomplete="off">
+        <label for="askInput" class="label">Ask me anything</label>
+        <div class="askrow">
+          <input id="askInput" type="text" maxlength="300" placeholder="What's your strongest project?">
+          <button type="submit" aria-label="Send question"><svg viewBox="0 0 16 16"><path d="M2 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+        <span class="askhint">AI answers based on my CV</span>
+      </form>
     </div>
   </section>
   <div class="facts">
@@ -340,16 +360,17 @@ const CAPTIONS = [
 ];
 const vid = document.getElementById('vid'), still = document.getElementById('still');
 const capEl = document.getElementById('caption'), playBtn = document.getElementById('playBtn'), soundBtn = document.getElementById('soundBtn');
-let shownLine = -1;
+let shownLine = -1, chatMode = false;
 
 function render() {
+  requestAnimationFrame(render);
+  if (chatMode) return;
   const t = vid.currentTime || 0, dur = vid.duration || 4;
   let i = 0; CAPTIONS.forEach((c, k) => { if (t >= c.t) i = k; });
   const line = CAPTIONS[i], end = CAPTIONS[i + 1]?.t ?? dur;
   if (i !== shownLine) { capEl.innerHTML = line.s.split(' ').map(w => `<span>${w}</span>`).join(' '); shownLine = i; }
   const frac = Math.min(1, (t - line.t) / Math.max(.1, end - line.t - .3));
   [...capEl.children].forEach((w, k) => w.classList.toggle('on', k < Math.ceil(frac * capEl.children.length)));
-  requestAnimationFrame(render);
 }
 requestAnimationFrame(render);
 
@@ -369,7 +390,7 @@ function setSound(on) {
 }
 playBtn.onclick = () => setPlaying(vid.paused);
 soundBtn.onclick = () => {
-  if (vid.ended || vid.muted) { vid.currentTime = 0; setSound(true); playBtn.hidden = false; setPlaying(true); }
+  if (vid.ended || vid.muted) { chatMode = false; capEl.classList.remove('ai'); shownLine = -1; vid.currentTime = 0; setSound(true); playBtn.hidden = false; setPlaying(true); }
   else setSound(false);
 };
 vid.addEventListener('ended', () => {
@@ -385,6 +406,54 @@ vid.addEventListener('loadeddata', () => {
   vid.hidden = false; still.hidden = true;
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setPlaying(true); else setPlaying(false);
 }, { once: true });
+
+// ---------- AI chat (answers appear in the speech bubble) ----------
+// Set CHAT_API to your deployed api/ URL (see README). Locally it uses the dev server.
+const CHAT_API = ['localhost', '127.0.0.1'].includes(location.hostname)
+  ? 'http://localhost:8000'
+  : 'https://rowan-portfolio-api.onrender.com';
+const chatHistory = [];
+
+async function askRowan(question) {
+  const res = await fetch(`${CHAT_API}/ask`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ question, history: chatHistory.slice(-6) }),
+  });
+  if (res.status === 429) throw new Error("You've asked a lot of questions. Give me a minute, or use the contact section.");
+  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || 'The assistant is unavailable right now.');
+  const { answer } = await res.json();
+  chatHistory.push({ role: 'user', content: question }, { role: 'assistant', content: answer.slice(0, 600) });
+  return answer;
+}
+
+// A network failure (TypeError) means the API isn't reachable; anything else carries its own message.
+function chatError(err) {
+  return err instanceof TypeError ? 'The chat assistant is offline right now. Try the terminal below or the contact section.' : err.message;
+}
+
+function showInBubble(html, ai = true) {
+  chatMode = true;
+  capEl.classList.toggle('ai', ai);
+  capEl.innerHTML = html;
+}
+function revealWords(text) {
+  showInBubble(text.split(/\s+/).map(w => `<span>${esc(w)}</span>`).join(' '));
+  [...capEl.children].forEach((w, k) => setTimeout(() => w.classList.add('on'), k * 45));
+}
+
+const askForm = document.getElementById('askForm'), askInput = document.getElementById('askInput');
+askForm.onsubmit = async e => {
+  e.preventDefault();
+  const q = askInput.value.trim();
+  if (!q) return;
+  askInput.value = ''; askInput.disabled = true;
+  vid.pause(); setSound(false);
+  showInBubble('<span class="dots"><i></i><i></i><i></i></span>');
+  try { revealWords(await askRowan(q)); }
+  catch (err) { showInBubble(esc(chatError(err)), false); }
+  finally { askInput.disabled = false; askInput.focus(); }
+};
 
 // ---------- ID card ----------
 const card = document.getElementById('idcard'), scene = document.getElementById('scene');
@@ -447,7 +516,7 @@ showStamp(0);
 // ---------- terminal ----------
 const out = document.getElementById('out'), cmd = document.getElementById('cmd');
 const CMDS = {
-  help: () => `available commands:\n  <span class="p">whoami</span>    who is this\n  <span class="p">skills</span>    what I can do\n  <span class="p">stack</span>     tools I use daily\n  <span class="p">projects</span>  things I've built\n  <span class="p">now</span>       what I'm working on\n  <span class="p">hire</span>      how to reach me\n  <span class="p">clear</span>     wipe the screen`,
+  help: () => `available commands:\n  <span class="p">whoami</span>    who is this\n  <span class="p">skills</span>    what I can do\n  <span class="p">stack</span>     tools I use daily\n  <span class="p">projects</span>  things I've built\n  <span class="p">now</span>       what I'm working on\n  <span class="p">hire</span>      how to reach me\n  <span class="p">ask</span> …     ask me anything (AI, based on my CV)\n  <span class="p">clear</span>     wipe the screen`,
   whoami: () => `Rowan Elansary. Backend engineer.\nI turn messy requirements into clean APIs and databases you can trust.`,
   skills: () => [
     ['API design', 'REST, versioning, pagination, error contracts'],
@@ -470,7 +539,18 @@ function run(input) {
   if (!c) return;
   if (c === 'clear') { out.innerHTML = ''; return; }
   const fn = CMDS[c] || (c.startsWith('sudo') ? CMDS.sudo : null);
-  out.innerHTML += `<span class="p">$</span> ${esc(input)}\n${fn ? fn() : `command not found: ${esc(c)}. try <span class="p">help</span>`}\n\n`;
+  // Not a command: `ask ...` or anything that reads like a question goes to the AI.
+  const question = c.startsWith('ask ') ? input.trim().slice(4) : (!fn && (c.includes(' ') || c.endsWith('?')) ? input.trim() : null);
+  if (question) return askInTerminal(input, question);
+  out.innerHTML += `<span class="p">$</span> ${esc(input)}\n${fn ? fn() : `command not found: ${esc(c)}. try <span class="p">help</span>, or just ask a question`}\n\n`;
+  out.scrollTop = out.scrollHeight;
+}
+async function askInTerminal(input, question) {
+  const line = document.createElement('span');
+  line.innerHTML = `<span class="p">$</span> ${esc(input)}\n<span class="d">rowan-ai is thinking…</span>\n\n`;
+  out.appendChild(line); out.scrollTop = out.scrollHeight;
+  try { line.innerHTML = `<span class="p">$</span> ${esc(input)}\n<span class="p">rowan-ai</span> ${esc(await askRowan(question))}\n\n`; }
+  catch (err) { line.innerHTML = `<span class="p">$</span> ${esc(input)}\n<span class="d">${esc(chatError(err))}</span>\n\n`; }
   out.scrollTop = out.scrollHeight;
 }
 document.getElementById('termForm').onsubmit = e => { e.preventDefault(); run(cmd.value); cmd.value = ''; };
