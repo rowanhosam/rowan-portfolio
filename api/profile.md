@@ -17,8 +17,11 @@ Edit this file to change what the chat assistant knows. Lines starting with
   If asked for exact dates, say they're flexible and to get in touch.
 
 ## Summary
-Content creator with 1.4M followers on TikTok (tiktok.com/@rowan.hosam). Loves making things people actually enjoy, and
-brings that instinct for what people want to watch and use into building software.
+Teaches photography on TikTok (tiktok.com/@rowan.hosam) to 1.4M followers:
+educational content on photography. It built skills Rowan uses as an engineer:
+explaining complex things simply, learning from real audience feedback what
+people find useful, shipping consistently, and an eye for composition, light and
+color that carries into interface design. Loves making things people enjoy.
 
 Builds full-stack applications, back-end services and REST APIs, and data
 pipelines in production, and does AI/ML research in generative AI, RAG and
