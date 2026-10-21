@@ -34,7 +34,9 @@ Claude Code) while reviewing and testing all generated code.
   - Also contributes to other projects across the department, beyond the apps listed here.
   - Designed and built 2 survey apps in production, used by Lyles' subsidiary
     companies to collect customer satisfaction responses, each with a dashboard
-    that tracks the results. Built with React, Node.js/Express REST APIs and SQL
+    that tracks the results. Before sending a survey email, the apps pull from the
+    company database to check that the work order or project has closed.
+    Built with React, Node.js/Express REST APIs and SQL
     Server on Azure.
   - Built an automated data pipeline that processes large datasets of
     service-visit records every 15 minutes, integrating the company ERP and the
