@@ -11,7 +11,7 @@ Edit this file to change what the chat assistant knows. Lines starting with
 - LinkedIn: linkedin.com/in/rowan-elansary
 - GitHub: github.com/rowanhosam
 - Experience: 1+ years across 5 internships, plus two research assistant roles
-- Availability: open to a Summer 2027 internship (May to September), then
+- Availability: open to a Summer 2027 internship (May to August), then
   returning to full-time studies.
 
 ## Summary
