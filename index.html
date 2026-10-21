@@ -213,8 +213,8 @@ section.block { padding-block: 72px; border-top: 1px solid var(--line); }
 /* passport stamps */
 .passport { background: var(--paper); border: 1px solid var(--line); border-radius: 22px; padding: clamp(18px, 4vw, 40px);
   background-image: repeating-radial-gradient(circle at 20% 30%, transparent 0 14px, color-mix(in srgb, var(--accent) 7%, transparent) 14px 15px); }
-.stamps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 26px 14px; }
-@media (max-width: 1000px) { .stamps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.stamps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 26px 18px; }
+@media (max-width: 1000px) { .stamps { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .stamp { all: unset; cursor: pointer; justify-self: center; display: grid; place-items: center; text-align: center; color: var(--c);
   border: 3px solid var(--c); padding: 18px 20px; width: min(230px, 100%); min-height: 150px; transform: rotate(var(--r));
   transition: transform .25s; position: relative; mix-blend-mode: multiply; }
@@ -258,7 +258,6 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
   .figure { height: clamp(360px, 92vw, 520px); }
   .intro { padding-bottom: 32px; }
   .head, .cardstage { grid-template-columns: minmax(0, 1fr); }
-  .stamps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .record { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 640px) {
@@ -289,7 +288,7 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
     <div class="intro">
       <span class="label" id="introLabel">Access pass · Holder</span>
       <h1><em>Full-stack</em><br>Engineer.</h1>
-      <p>React up front, C#, Node and FastAPI behind it, SQL underneath. I build full web apps that go all the way to production, plus AI research on the side.</p>
+      <p>React up front, C#, Node and FastAPI behind it, SQL underneath, and Swift for iPhone and Mac. I build apps that go all the way to production, plus AI research on the side.</p>
       <div class="ctas"><a class="primary" id="mainCta" href="#stamps">Explore work →</a><a href="#contact">Let's talk</a></div>
     </div>
     <div class="figure">
@@ -583,7 +582,7 @@ const bc = document.getElementById('barcode');
 // ---------- stamps ----------
 const STAMPS = [
   { t: "2 Apps in Prod", y: "2026", p: "Lyles · C# + React", shape: "round", c: "--accent", r: -8,
-    d: "Building full web apps with C# and React at Lyles Construction Group. Owned the design and build of 2 full-stack applications in production, including a customer satisfaction system with React, Node.js/Express REST APIs and SQL Server on Azure." },
+    d: "Building full web apps with C# and React at Lyles Construction Group. Owned the design and build of 2 full-stack applications in production, including a customer satisfaction system with React, Node.js/Express REST APIs and SQL Server on Azure. I also contribute to projects across the department." },
   { t: "15-Min Pipeline", y: "2026", p: "ERP + MS Graph", shape: "", c: "--stamp-green", r: 6,
     d: "Built an automated data pipeline that processes large datasets of service-visit records every 15 minutes, integrating the company ERP and the Microsoft Graph API." },
   { t: "4 Vulns Fixed", y: "2026", p: "Before production", shape: "oval", c: "--stamp-red", r: -4,
@@ -600,6 +599,8 @@ const STAMPS = [
     d: "Built Python automation scripts that cut reporting time by 80%. Also cleaned, transformed and validated operational healthcare datasets as a Digital Health intern at Valley Children's Hospital." },
   { t: "Dean's List", y: "2025", p: "+ Cybersecurity cert", shape: "oval", c: "--stamp-green", r: -3,
     d: "Dean's List in Spring 2025 and a Cybersecurity Fundamentals Certificate, in the accelerated CS B.S./M.S. program at Fresno State (expected December 2027)." },
+  { t: "iOS + Mac Apps", y: "Now", p: "Swift · SwiftUI", shape: "oval", c: "--stamp-red", r: -6,
+    d: "I build in Swift and SwiftUI. At Lyles I help build and integrate an iPhone and Mac app used internally and by partner companies, connected to an Azure API and SQL Server back end. Outside school and work, I build my own iPhone apps." },
   { t: "Web + Social", y: "Now", p: "Madera K-16 Collab", shape: "round", c: "--accent", r: 5,
     d: "Website and social media intern for the Madera K-16 Collaborative at Fresno State, running its website and social media channels." },
 ];
@@ -644,7 +645,7 @@ const CMDS = {
     ['2025', 'Computer Vision Research Assistant, Fresno State'],
     ['2025', 'Data Analyst Intern, Umida Ag & Terra Tech'],
   ].map(([a, b]) => `<span class="p">${a.padEnd(10)}</span>${b}`).join('\n'),
-  projects: () => `<span class="p">customer-satisfaction</span> React + C# / Node + SQL Server on Azure\n<span class="p">service-pipeline</span>      ERP + Microsoft Graph, every 15 minutes\n<span class="p">readiness-engine</span>      Svelte + FastAPI + PostgreSQL, TRL/CRL scoring\n<span class="p">evenstar-trading</span>      membership site, 2,000+ users\n<span class="p">vision-3d</span>             YOLOv8 + depth cameras, 91% accuracy\n<span class="d">see the passport stamps for details</span>`,
+  projects: () => `<span class="p">customer-satisfaction</span> React + C# / Node + SQL Server on Azure\n<span class="p">service-pipeline</span>      ERP + Microsoft Graph, every 15 minutes\n<span class="p">readiness-engine</span>      Svelte + FastAPI + PostgreSQL, TRL/CRL scoring\n<span class="p">evenstar-trading</span>      membership site, 2,000+ users\n<span class="p">lyles-apple-app</span>       Swift app for iPhone + Mac, Azure API back end\n<span class="p">personal-ios</span>          my own iPhone apps in Swift + SwiftUI\n<span class="p">vision-3d</span>             YOLOv8 + depth cameras, 91% accuracy\n<span class="d">see the passport stamps for details</span>`,
   now: () => `AI & Innovation Intern at Lyles: full web apps in C# and React, data pipelines, a Swift app for iPhone and Mac\nWebsite & Social Media Intern, Madera K-16 Collaborative\nresearching RAG and generative AI at Fresno State (just won People's Choice at INSPIRE 2026)`,
   hire: () => `email:    rowanelansary123@gmail.com\nlinkedin: linkedin.com/in/rowan-elansary\ngithub:   github.com/rowanhosam\nstatus:   <span class="p">available for a Summer 2027 internship (May–Sept)</span>`,
   sudo: () => `nice try. you need clearance ROOT. check the ID card.`,
@@ -695,7 +696,7 @@ const ROLES = {
     briefLabel: 'In 30 seconds',
     brief: [
       ['What I do', 'Full web apps with React and C#, plus FastAPI and Node APIs and SQL, shipped to production on Azure.'],
-      ['Recent impact', 'People’s Choice award at INSPIRE 2026 for my generative AI research. 2 production apps and a 15-minute ERP data pipeline at Lyles.'],
+      ['Recent impact', 'People’s Choice award at INSPIRE 2026 for my generative AI research. At Lyles I own 2 production apps and a 15-minute ERP data pipeline, and contribute to projects across the department.'],
       ['Availability', 'Summer 2027 internship (May–Sept). CS B.S./M.S. at Fresno State, graduating December 2027.'],
     ],
   },
@@ -703,7 +704,7 @@ const ROLES = {
     name: 'Engineer', clearance: 'DEV-READ', cta: ['Open the terminal →', '#terminal'], ask: 'How does this site’s chat work?',
     briefLabel: 'Under the hood',
     brief: [
-      ['Stack', 'React, Tailwind · C#, FastAPI, Node/Express · PostgreSQL, SQL Server, BigQuery · Azure, Docker. Svelte at F3 Innovate.'],
+      ['Stack', 'React, Tailwind · C#, FastAPI, Node/Express · Swift, SwiftUI · PostgreSQL, SQL Server, BigQuery · Azure, Docker. Svelte at F3 Innovate.'],
       ['This site', 'A static page plus a FastAPI chat service that calls Claude Haiku, rate limited per visitor with slowapi.'],
       ['The video', 'AI-generated, background removed frame by frame with BiRefNet, shipped as VP9 and HEVC video with transparency.'],
     ],

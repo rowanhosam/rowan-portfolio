@@ -31,6 +31,7 @@ Claude Code) while reviewing and testing all generated code.
 - AI & Innovation Intern, Lyles Construction Group (Lyles Services Co.), Fresno, CA.
   Aug 2026 to present.
   - Builds full web apps with C# and React.
+  - Also contributes to other projects across the department, beyond the apps listed here.
   - Owned the design and build of 2 full-stack applications in production,
     including a customer satisfaction system with React, Node.js/Express REST
     APIs and SQL Server on Azure.
@@ -72,7 +73,8 @@ Claude Code) while reviewing and testing all generated code.
 - Community membership website, evenstar-trading.com (2026): designed, built and
   deployed a responsive site serving 2,000+ users; manages hosting, deployments,
   version control and payment redirection.
-- Personal iOS apps in Swift and SwiftUI, built outside school and work (ongoing).
+- Personal iPhone apps in Swift and SwiftUI, built outside school and work (ongoing).
+  Swift/SwiftUI is also used at Lyles for an internal and partner-facing iPhone and Mac app.
 - This portfolio: static site plus a FastAPI chat service that calls Claude
   Haiku, rate limited per visitor; the intro video is AI-generated with the
   background removed frame by frame.
