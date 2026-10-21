@@ -17,6 +17,10 @@ Edit this file to change what the chat assistant knows. Lines starting with
   If asked for exact dates, say they're flexible and to get in touch.
 
 ## Summary
+Content creator with 1.4M followers on Rowan's own social accounts (if asked which
+platforms, say to get in touch). Loves making things people actually enjoy, and
+brings that instinct for what people want to watch and use into building software.
+
 Builds full-stack applications, back-end services and REST APIs, and data
 pipelines in production, and does AI/ML research in generative AI, RAG and
 computer vision. Uses AI-assisted development tools daily (Copilot, Cursor,
