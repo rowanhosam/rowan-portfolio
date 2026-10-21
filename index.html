@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rowan's Access Pass</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Caveat:wght@600&display=swap">
+<style>
+/* Layout: an "access pass" world. Talking video tile -> flippable CR80 ID card -> passport page of stamps -> terminal. */
+:root {
+  --bg: #e8ecf2;
+  --paper: #f6f8fb;
+  --ink: #131a2a;
+  --muted: #586378;
+  --line: #c9d1de;
+  --accent: #2b45f5;
+  --accent-soft: #d9defd;
+  --stamp-red: #b3242f;
+  --stamp-green: #1d6f48;
+  --term-bg: #0f1420;
+  --term-fg: #d6deeb;
+  --term-dim: #7c879b;
+  --term-hl: #9fb0ff;
+  --font-display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --font-body: "Instrument Sans", "Helvetica Neue", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --font-hand: "Caveat", "Bradley Hand", cursive;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c1018; --paper: #151b27; --ink: #e7ebf3; --muted: #8e98ab; --line: #273042;
+    --accent: #8394ff; --accent-soft: #1e2650; --stamp-red: #f0717a; --stamp-green: #5fc795;
+    --term-bg: #080b12; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c1018; --paper: #151b27; --ink: #e7ebf3; --muted: #8e98ab; --line: #273042;
+  --accent: #8394ff; --accent-soft: #1e2650; --stamp-red: #f0717a; --stamp-green: #5fc795;
+  --term-bg: #080b12; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 400 1rem/1.6 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  overflow-x: hidden;
+}
+.wrap { max-width: 1120px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.05; }
+.label { font: 600 .72rem/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+button { font: inherit; color: inherit; }
+
+/* top bar */
+.top { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 22px; flex-wrap: wrap; }
+.top nav { display: flex; gap: 18px; flex-wrap: wrap; }
+.top nav a { color: var(--muted); text-decoration: none; font: 500 .9rem var(--font-body); }
+.top nav a:hover { color: var(--ink); }
+
+/* hero */
+.hero { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: center; padding-block: 24px 72px; }
+.hero h1 { font-size: clamp(2.6rem, 6.4vw, 5.2rem); font-weight: 800; letter-spacing: -.035em; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero p.lede { font-size: 1.15rem; color: var(--muted); max-width: 46ch; margin: 22px 0 0; }
+.hero .meta { display: flex; gap: 28px; margin-top: 30px; flex-wrap: wrap; }
+.hero .meta div { display: grid; gap: 6px; }
+.hero .meta b { font: 700 1.05rem var(--font-display); }
+
+/* talking tile */
+.tile { position: relative; aspect-ratio: 4 / 5; max-width: 100%; border-radius: 30px; overflow: hidden;
+  background: radial-gradient(120% 80% at 50% 100%, var(--accent-soft), var(--paper) 70%); border: 1px solid var(--line); }
+.tile video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.tile .rec { position: absolute; top: 16px; left: 16px; display: flex; gap: 8px; align-items: center; z-index: 3;
+  font: 600 .7rem var(--font-mono); letter-spacing: .12em; background: color-mix(in srgb, var(--paper) 80%, transparent); padding: 7px 10px; border-radius: 99px; }
+.rec i { width: 8px; height: 8px; border-radius: 50%; background: var(--stamp-red); animation: blink 1.4s infinite; }
+@keyframes blink { 50% { opacity: .25; } }
+.tile .ctrls { position: absolute; top: 16px; right: 16px; display: flex; gap: 8px; z-index: 3; }
+.ctrls button, .ctrls label { border: 0; cursor: pointer; background: color-mix(in srgb, var(--paper) 80%, transparent); width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; }
+.ctrls svg { width: 16px; height: 16px; fill: var(--ink); }
+.ctrls input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.caption { position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 3; padding: 14px 16px; border-radius: 18px;
+  background: color-mix(in srgb, var(--ink) 88%, transparent); color: var(--bg); font: 500 1.02rem/1.4 var(--font-body); min-height: 3.6em; }
+.caption span { opacity: .38; transition: opacity .15s; }
+.caption span.on { opacity: 1; }
+
+/* the avatar stand-in */
+.avatar { position: absolute; inset: 0; display: grid; place-items: end center; }
+.avatar svg { width: 82%; height: auto; }
+.avatar .mouth { transform-origin: 160px 176px; transform: scaleY(var(--mouth, .15)); }
+.avatar .eyes { transform-origin: 160px 140px; animation: eyes 5s infinite; }
+@keyframes eyes { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.1); } }
+.tile.has-video .avatar { display: none; }
+.tilehint { margin-top: 12px; font-size: .85rem; color: var(--muted); }
+
+/* sections */
+section.block { padding-block: 72px; border-top: 1px solid var(--line); }
+.head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px 48px; align-items: end; margin-bottom: 40px; }
+.head h2 { font-size: clamp(2rem, 4.4vw, 3.3rem); font-weight: 800; letter-spacing: -.03em; margin-top: 12px; }
+.head p { color: var(--muted); margin: 0; max-width: 52ch; }
+
+/* ID card */
+.cardstage { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 48px; align-items: center; }
+.scene { perspective: 1400px; display: grid; place-items: center; padding: 24px 0; }
+.lanyard { width: 2px; height: 70px; background: var(--muted); margin: 0 auto -6px; opacity: .5; }
+.idcard { all: unset; cursor: pointer; display: block; width: min(460px, 100%); aspect-ratio: 85.6 / 53.98; position: relative;
+  transform-style: preserve-3d; transition: transform .8s cubic-bezier(.2, .8, .2, 1);
+  transform: rotateX(var(--rx, 0deg)) rotateY(calc(var(--ry, 0deg) + var(--flip, 0deg))); }
+.idcard.flipped { --flip: 180deg; }
+.idcard:focus-visible { outline: 2px solid var(--accent); outline-offset: 8px; border-radius: 18px; }
+.face { position: absolute; inset: 0; border-radius: 18px; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  background: var(--paper); border: 1px solid var(--line); box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--ink) 45%, transparent);
+  container-type: inline-size; }
+.face.back { transform: rotateY(180deg); }
+.front { display: grid; grid-template-columns: 34% 1fr; gap: 5cqw; padding: 6cqw; }
+.front::before { content: ""; position: absolute; inset: 0 0 auto; height: 14cqw; background: var(--accent); }
+.front .org { position: absolute; top: 4.2cqw; left: 6cqw; right: 6cqw; display: flex; justify-content: space-between;
+  font: 600 2.6cqw var(--font-mono); letter-spacing: .18em; color: var(--paper); }
+.photo { margin-top: 10cqw; border-radius: 3cqw; background: var(--accent-soft); display: grid; place-items: center; overflow: hidden; position: relative; z-index: 1; border: 1.2cqw solid var(--paper); }
+.photo b { font: 800 13cqw var(--font-display); color: var(--accent); }
+.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.fields { margin-top: 13cqw; display: grid; align-content: start; gap: 2.4cqw; min-width: 0; position: relative; z-index: 1; }
+.fields .nm { font: 800 7.4cqw/0.95 var(--font-display); letter-spacing: -.02em; }
+.fields .rl { font: 600 3.3cqw var(--font-body); color: var(--accent); }
+.kv { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.6cqw 3cqw; margin-top: 1.4cqw; }
+.kv span { display: block; font: 600 2cqw var(--font-mono); letter-spacing: .12em; color: var(--muted); text-transform: uppercase; }
+.kv strong { font: 600 3cqw var(--font-mono); }
+.chip { position: absolute; right: 6cqw; bottom: 6cqw; width: 11cqw; aspect-ratio: 1.25; border-radius: 1.6cqw; z-index: 1;
+  background: linear-gradient(135deg, #d9b25a, #f3dc96 45%, #b88d3a); box-shadow: inset 0 0 0 .3cqw #9c772c; }
+.holo { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: color-dodge; opacity: .5; z-index: 2;
+  background: conic-gradient(from calc(var(--mx, .5) * 360deg) at calc(var(--mx, .5) * 100%) calc(var(--my, .5) * 100%),
+    #ff8ad8, #7ff0ff, #b6ff8a, #ffe680, #ff8ad8);
+  -webkit-mask: repeating-linear-gradient(115deg, #000 0 2px, transparent 2px 7px); mask: repeating-linear-gradient(115deg, #000 0 2px, transparent 2px 7px); }
+.back { display: grid; grid-template-rows: auto 1fr auto; }
+.stripe { height: 13cqw; background: var(--ink); margin-top: 7cqw; }
+.backbody { padding: 4cqw 6cqw; display: grid; grid-template-columns: 1fr auto; gap: 4cqw; }
+.sig { font: 600 7cqw/1 var(--font-hand); color: var(--accent); border-bottom: .3cqw solid var(--line); padding: 1cqw 2cqw; background: repeating-linear-gradient(-45deg, transparent 0 1cqw, var(--accent-soft) 1cqw 1.4cqw); }
+.clear { display: flex; flex-wrap: wrap; gap: 1.4cqw; margin-top: 3cqw; }
+.clear i { font: 600 2.3cqw var(--font-mono); font-style: normal; border: .25cqw solid var(--line); border-radius: 99px; padding: .8cqw 2cqw; }
+.barcode { display: flex; gap: .45cqw; height: 17cqw; align-items: stretch; }
+.barcode b { background: var(--ink); }
+.backfoot { padding: 0 6cqw 4.5cqw; font: 500 2.2cqw var(--font-mono); color: var(--muted); letter-spacing: .06em; }
+.cardside ul { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 14px; }
+.cardside li { display: grid; grid-template-columns: 26px 1fr; gap: 10px; color: var(--muted); }
+.cardside kbd { font: 600 .72rem var(--font-mono); border: 1px solid var(--line); border-radius: 6px; padding: 2px 6px; color: var(--ink); height: fit-content; text-align: center; }
+.flipbtn { margin-top: 24px; border: 1px solid var(--ink); background: var(--ink); color: var(--bg); padding: 12px 20px; border-radius: 99px; cursor: pointer; font-weight: 600; }
+
+/* passport stamps */
+.passport { background: var(--paper); border: 1px solid var(--line); border-radius: 22px; padding: clamp(18px, 4vw, 40px);
+  background-image: repeating-radial-gradient(circle at 20% 30%, transparent 0 14px, color-mix(in srgb, var(--accent) 7%, transparent) 14px 15px); }
+.stamps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 20px; }
+.stamp { all: unset; cursor: pointer; justify-self: center; display: grid; place-items: center; text-align: center; color: var(--c);
+  border: 3px solid var(--c); padding: 18px 20px; width: min(230px, 100%); min-height: 150px; transform: rotate(var(--r));
+  transition: transform .25s; position: relative; mix-blend-mode: multiply; }
+:root[data-theme="dark"] .stamp { mix-blend-mode: normal; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .stamp { mix-blend-mode: normal; } }
+.stamp::after { content: ""; position: absolute; inset: 5px; border: 1px solid var(--c); border-radius: inherit; }
+.stamp.round { border-radius: 50%; aspect-ratio: 1; min-height: 0; width: min(190px, 100%); }
+.stamp.oval { border-radius: 50% / 38%; }
+.stamp:hover, .stamp:focus-visible, .stamp.sel { transform: rotate(0deg) scale(1.05); }
+.stamp .y { font: 600 .7rem var(--font-mono); letter-spacing: .2em; }
+.stamp .t { font: 800 1.15rem/1.05 var(--font-display); text-transform: uppercase; letter-spacing: -.01em; margin: 6px 0; }
+.stamp .p { font: 600 .66rem var(--font-mono); letter-spacing: .14em; text-transform: uppercase; }
+.stamp.example { opacity: .55; border-style: dashed; }
+.record { margin-top: 32px; padding-top: 22px; border-top: 1px dashed var(--line); display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 18px; }
+.record h3 { font-size: 1.5rem; }
+.record p { margin: 8px 0 0; color: var(--muted); max-width: 62ch; }
+
+/* terminal */
+.term { background: var(--term-bg); color: var(--term-fg); border-radius: 18px; font: 400 .9rem/1.6 var(--font-mono); overflow: hidden; border: 1px solid var(--line); }
+.term .bar { display: flex; gap: 8px; align-items: center; padding: 12px 16px; border-bottom: 1px solid #ffffff14; color: var(--term-dim); font-size: .75rem; }
+.term .bar i { width: 11px; height: 11px; border-radius: 50%; background: #ffffff26; }
+.term .out { padding: 16px 18px; height: 380px; overflow-y: auto; white-space: pre-wrap; word-break: break-word; }
+.term .p { color: var(--term-hl); }
+.term .d { color: var(--term-dim); }
+.term form { display: flex; gap: 10px; padding: 0 18px 16px; }
+.term input { flex: 1; min-width: 0; background: transparent; border: 0; color: var(--term-fg); font: inherit; outline: none; caret-color: var(--term-hl); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.chips button { border: 1px solid var(--line); background: var(--paper); border-radius: 99px; padding: 6px 14px; font: 600 .8rem var(--font-mono); cursor: pointer; }
+.chips button:hover { border-color: var(--accent); color: var(--accent); }
+
+/* footer */
+footer { padding-block: 72px 56px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; align-items: end; }
+footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacing: -.03em; }
+.contact { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 18px; }
+.contact code { font: 600 1rem var(--font-mono); user-select: all; background: var(--paper); border: 1px solid var(--line); padding: 10px 14px; border-radius: 10px; }
+.contact button { border: 0; background: var(--accent); color: var(--paper); padding: 11px 16px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+
+@media (max-width: 820px) {
+  .hero, .head, .cardstage { grid-template-columns: minmax(0, 1fr); }
+  .tile { max-width: 380px; }
+  .stamps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .record { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 460px) { .stamps { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <span class="label">Rowan Elansary · Backend Engineer</span>
+    <nav><a href="#pass">Pass</a><a href="#stamps">Stamps</a><a href="#terminal">Terminal</a><a href="#contact">Contact</a></nav>
+  </header>
+
+  <!-- HERO: talking tile -->
+  <section class="hero">
+    <div>
+      <div class="tile" id="tile">
+        <div class="rec"><i></i><span id="recLabel">ON AIR · INTRO</span></div>
+        <div class="ctrls">
+          <button type="button" id="playBtn" aria-label="Pause intro"><svg viewBox="0 0 16 16" id="playIcon"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg></button>
+          <button type="button" id="soundBtn" aria-label="Turn sound on" hidden><svg viewBox="0 0 16 16"><path d="M2 6h3l4-3v10l-4-3H2z"/><path d="M11 5.5c1 .7 1 4.3 0 5" stroke="currentColor" fill="none"/></svg></button>
+          <label for="vidFile" aria-label="Preview with your own video" title="Preview with your own video"><svg viewBox="0 0 16 16"><path d="M7 3h2v4h4v2H9v4H7V9H3V7h4z"/></svg><input type="file" id="vidFile" accept="video/*"></label>
+        </div>
+        <div class="avatar" aria-hidden="true">
+          <svg viewBox="0 0 320 300">
+            <path d="M40 300c6-62 52-92 120-92s114 30 120 92z" fill="var(--ink)"/>
+            <rect x="136" y="180" width="48" height="40" rx="14" fill="#c98f6b"/>
+            <ellipse cx="160" cy="140" rx="62" ry="70" fill="#d9a07c"/>
+            <path d="M96 128c-4-52 28-78 66-78s68 26 62 80c-10-26-30-40-62-42-30 2-54 14-66 40z" fill="var(--ink)"/>
+            <g class="eyes"><ellipse cx="136" cy="140" rx="5" ry="6" fill="var(--ink)"/><ellipse cx="184" cy="140" rx="5" ry="6" fill="var(--ink)"/></g>
+            <ellipse class="mouth" cx="160" cy="176" rx="16" ry="11" fill="#6b2a2a"/>
+          </svg>
+        </div>
+        <video id="vid" playsinline muted loop preload="metadata" hidden></video>
+        <div class="caption" id="caption" aria-live="polite"></div>
+      </div>
+      <p class="tilehint">Stand-in avatar. Drop <code>intro.mp4</code> next to the page and it plays here, with these captions.</p>
+    </div>
+    <div>
+      <span class="label">Access pass · Holder</span>
+      <h1 style="margin-top:14px">I build the <em>backend</em> that keeps products honest.</h1>
+      <p class="lede">APIs, databases and the access rules in between. I care about clean data, fast endpoints and systems that are hard to misuse.</p>
+      <div class="meta">
+        <div><span class="label">Based in</span><b>Your city</b></div>
+        <div><span class="label">Currently</span><b>Building F3i</b></div>
+        <div><span class="label">Status</span><b>Open to work</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ID CARD -->
+  <section class="block" id="pass">
+    <div class="head">
+      <div><span class="label">Credential</span><h2>My ID card</h2></div>
+      <p>Tilt it, then flip it. The back shows my clearances. The card is drawn to CR80 proportions, the same 85.60 × 53.98 mm as the one in your wallet.</p>
+    </div>
+    <div class="cardstage">
+      <div class="scene" id="scene">
+        <div>
+          <div class="lanyard"></div>
+          <button class="idcard" id="idcard" type="button" aria-label="ID card, front. Press to flip.">
+            <div class="face front">
+              <div class="org"><span>ACCESS PASS</span><span>№ RE-0008</span></div>
+              <div class="photo"><b>RE</b><img src="photo.jpg" alt="" onerror="this.remove()"></div>
+              <div class="fields">
+                <div class="nm">Rowan<br>Elansary</div>
+                <div class="rl">Backend Engineer</div>
+                <div class="kv">
+                  <div><span>Clearance</span><strong>ROOT</strong></div>
+                  <div><span>Issued</span><strong>2026-10</strong></div>
+                  <div><span>Stack</span><strong>PY/SQL</strong></div>
+                  <div><span>Expires</span><strong>NEVER</strong></div>
+                </div>
+              </div>
+              <div class="chip"></div>
+              <div class="holo"></div>
+            </div>
+            <div class="face back">
+              <div class="stripe"></div>
+              <div class="backbody">
+                <div>
+                  <div class="sig">Rowan Elansary</div>
+                  <div class="clear"><i>FastAPI</i><i>PostgreSQL</i><i>PostGIS</i><i>SQLAlchemy</i><i>JWT auth</i><i>REST design</i><i>Testing</i></div>
+                </div>
+                <div class="barcode" id="barcode"></div>
+              </div>
+              <div class="backfoot">IF FOUND, HIRE THE HOLDER · github.com/rowanhosam</div>
+            </div>
+          </button>
+        </div>
+      </div>
+      <div class="cardside">
+        <span class="label">How to use</span>
+        <ul>
+          <li><kbd>↻</kbd><span>Move your pointer over the card to tilt it and catch the foil.</span></li>
+          <li><kbd>⏎</kbd><span>Click, tap or press Enter to flip it over.</span></li>
+          <li><kbd>📷</kbd><span>Add <code>photo.jpg</code> beside the page to replace the initials.</span></li>
+        </ul>
+        <button class="flipbtn" type="button" id="flipBtn">Flip card</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STAMPS -->
+  <section class="block" id="stamps">
+    <div class="head">
+      <div><span class="label">Entry record</span><h2>Passport stamps</h2></div>
+      <p>Every stamp is something I shipped or earned. Pick one to read the entry. Dashed stamps are examples waiting for your real wins.</p>
+    </div>
+    <div class="passport">
+      <div class="stamps" id="stampGrid"></div>
+      <div class="record" id="record" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- TERMINAL -->
+  <section class="block" id="terminal">
+    <div class="head">
+      <div><span class="label">What I can do</span><h2>Ask the terminal</h2></div>
+      <p>It's a backend portfolio, so the skills live in a shell. Type a command or tap one below. Try <code>help</code>.</p>
+    </div>
+    <div class="term">
+      <div class="bar"><i></i><i></i><i></i><span>guest@rowan: ~</span></div>
+      <div class="out" id="out"></div>
+      <form id="termForm" autocomplete="off">
+        <span class="p">$</span>
+        <label for="cmd" class="label" hidden>Command</label>
+        <input id="cmd" type="text" spellcheck="false" placeholder="type a command…">
+      </form>
+    </div>
+    <div class="chips" id="chips"></div>
+  </section>
+
+  <footer id="contact">
+    <div>
+      <span class="label">Return this pass to</span>
+      <h2 style="margin-top:12px">Let's build something.</h2>
+      <div class="contact">
+        <code id="email">hello@yourdomain.com</code>
+        <button type="button" id="copyBtn">Copy email</button>
+      </div>
+    </div>
+    <span class="label">© 2026 Rowan Elansary</span>
+  </footer>
+</div>
+
+<script>
+// ---------- talking tile ----------
+const CAPTIONS = [
+  { t: 0,    s: "Hi, I'm Rowan." },
+  { t: 2.2,  s: "I'm a backend engineer." },
+  { t: 4.6,  s: "I design APIs, databases and the access rules that keep data safe." },
+  { t: 9.6,  s: "Right now I'm building F3i, a platform that connects farms with the people who can help them." },
+  { t: 15.8, s: "Flip my ID card, read my stamps, or ask my terminal what I can do." },
+];
+const LOOP = 21.5;
+const tile = document.getElementById('tile'), vid = document.getElementById('vid');
+const capEl = document.getElementById('caption'), playBtn = document.getElementById('playBtn'), soundBtn = document.getElementById('soundBtn');
+let mode = 'avatar', playing = true, clock = 0, last = performance.now(), shownLine = -1;
+
+function lineAt(t) { let i = 0; CAPTIONS.forEach((c, k) => { if (t >= c.t) i = k; }); return i; }
+function render(t) {
+  const i = lineAt(t), line = CAPTIONS[i];
+  const end = (CAPTIONS[i + 1]?.t ?? LOOP) - 0.5;
+  if (i !== shownLine) { capEl.innerHTML = line.s.split(' ').map(w => `<span>${w}</span>`).join(' '); shownLine = i; }
+  const words = capEl.children, frac = Math.min(1, (t - line.t) / Math.max(.1, end - line.t - .4));
+  for (let k = 0; k < words.length; k++) words[k].classList.toggle('on', k < Math.ceil(frac * words.length) || frac >= 1);
+  const talking = mode === 'avatar' && playing && t < end;
+  tile.style.setProperty('--mouth', talking ? (.25 + Math.abs(Math.sin(t * 13)) * .75 * Math.abs(Math.sin(t * 3.1))).toFixed(2) : .15);
+}
+function tick(now) {
+  if (mode === 'avatar' && playing) clock = (clock + (now - last) / 1000) % LOOP;
+  if (mode === 'video') clock = vid.currentTime % LOOP;
+  last = now; render(clock); requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+function setPlaying(p) {
+  playing = p;
+  if (mode === 'video') p ? vid.play().catch(() => {}) : vid.pause();
+  playBtn.setAttribute('aria-label', p ? 'Pause intro' : 'Play intro');
+  document.getElementById('playIcon').innerHTML = p
+    ? '<rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/>'
+    : '<path d="M4 2l10 6-10 6z"/>';
+}
+playBtn.onclick = () => setPlaying(!playing);
+soundBtn.onclick = () => { vid.muted = !vid.muted; soundBtn.setAttribute('aria-label', vid.muted ? 'Turn sound on' : 'Mute'); soundBtn.style.opacity = vid.muted ? .6 : 1; };
+
+function useVideo(src) {
+  vid.src = src;
+  vid.addEventListener('loadeddata', () => {
+    mode = 'video'; vid.hidden = false; soundBtn.hidden = false; tile.classList.add('has-video');
+    document.getElementById('recLabel').textContent = 'ON AIR · LIVE';
+    setPlaying(true);
+  }, { once: true });
+}
+vid.addEventListener('error', () => { mode = 'avatar'; vid.hidden = true; });
+useVideo('intro.mp4');
+document.getElementById('vidFile').onchange = e => { const f = e.target.files[0]; if (f) useVideo(URL.createObjectURL(f)); };
+
+// ---------- ID card ----------
+const card = document.getElementById('idcard'), scene = document.getElementById('scene');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function flip() {
+  card.classList.toggle('flipped');
+  card.setAttribute('aria-label', `ID card, ${card.classList.contains('flipped') ? 'back' : 'front'}. Press to flip.`);
+}
+card.onclick = flip;
+document.getElementById('flipBtn').onclick = flip;
+if (!reduce) {
+  scene.addEventListener('pointermove', e => {
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+    card.style.setProperty('--ry', `${(x - .5) * 22}deg`); card.style.setProperty('--rx', `${(.5 - y) * 16}deg`);
+    card.style.setProperty('--mx', x.toFixed(3)); card.style.setProperty('--my', y.toFixed(3));
+  });
+  scene.addEventListener('pointerleave', () => { card.style.setProperty('--ry', '0deg'); card.style.setProperty('--rx', '0deg'); });
+}
+// barcode generated from the holder's name
+const bc = document.getElementById('barcode');
+[...'ROWANELANSARY0008'].forEach(ch => {
+  const n = ch.charCodeAt(0);
+  [n % 3 + 1, (n >> 2) % 2 + 1, n % 4 + 1].forEach((w, k) => { const b = document.createElement('b'); b.style.width = (w * .35) + 'cqw'; b.style.opacity = k === 1 ? 0 : 1; bc.appendChild(b); });
+});
+
+// ---------- stamps ----------
+const STAMPS = [
+  { t: "Access Control", y: "2026", p: "F3i · Phase 8", shape: "round", c: "--accent", r: -8,
+    d: "Shipped project-level access control across the F3i API, so every request is checked against who can see which project." },
+  { t: "Geo Asset Map", y: "2026", p: "PostGIS", shape: "", c: "--stamp-green", r: 6,
+    d: "Built geospatial endpoints with PostGIS, GeoAlchemy and Shapely to map farm assets and query them by location." },
+  { t: "Grant Scoring", y: "2026", p: "Innovation grants", shape: "oval", c: "--stamp-red", r: -4,
+    d: "Designed the scoring, criteria and results flow for innovation-grant applications, from submission to dashboard." },
+  { t: "API Hardening", y: "2026", p: "Security", shape: "", c: "--stamp-red", r: 9,
+    d: "Added rate limiting, IP blocking, security headers, JWT sessions and signed API keys to the backend." },
+  { t: "Hackathon Win", y: "20XX", p: "Example", shape: "round", c: "--accent", r: 4, example: true,
+    d: "Example stamp. Replace with a competition, award or prize you won, and one line on what you built." },
+  { t: "Degree", y: "20XX", p: "Example", shape: "oval", c: "--stamp-green", r: -7, example: true,
+    d: "Example stamp. Replace with your degree, bootcamp or certification." },
+];
+const grid = document.getElementById('stampGrid'), rec = document.getElementById('record');
+function showStamp(i) {
+  const s = STAMPS[i];
+  grid.querySelectorAll('.stamp').forEach((el, k) => el.classList.toggle('sel', k === i));
+  rec.innerHTML = `<div><span class="label">Entry ${String(i + 1).padStart(2, '0')} · ${s.y}</span></div>
+    <div><h3>${s.t}</h3><p>${s.d}</p></div>`;
+}
+STAMPS.forEach((s, i) => {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = `stamp ${s.shape} ${s.example ? 'example' : ''}`;
+  b.style.setProperty('--c', `var(${s.c})`); b.style.setProperty('--r', `${s.r}deg`);
+  b.innerHTML = `<div><div class="y">★ ${s.y} ★</div><div class="t">${s.t}</div><div class="p">${s.p}</div></div>`;
+  b.onclick = () => showStamp(i);
+  grid.appendChild(b);
+});
+showStamp(0);
+
+// ---------- terminal ----------
+const out = document.getElementById('out'), cmd = document.getElementById('cmd');
+const CMDS = {
+  help: () => `available commands:\n  <span class="p">whoami</span>    who is this\n  <span class="p">skills</span>    what I can do\n  <span class="p">stack</span>     tools I use daily\n  <span class="p">projects</span>  things I've built\n  <span class="p">now</span>       what I'm working on\n  <span class="p">hire</span>      how to reach me\n  <span class="p">clear</span>     wipe the screen`,
+  whoami: () => `Rowan Elansary. Backend engineer.\nI turn messy requirements into clean APIs and databases you can trust.`,
+  skills: () => [
+    ['API design', 'REST, versioning, pagination, error contracts'],
+    ['Data', 'schema design, migrations, query tuning, geospatial'],
+    ['Security', 'auth (JWT, API keys), RBAC, rate limiting'],
+    ['Quality', 'automated tests, code review, docs'],
+    ['Delivery', 'deploys, env config, monitoring basics'],
+  ].map(([a, b]) => `<span class="p">${a.padEnd(12)}</span><span class="d">${b}</span>`).join('\n'),
+  stack: () => `python · fastapi · uvicorn\npostgresql · postgis · sqlalchemy · asyncpg\npytest · git · github\n<span class="d">(edit this list in the page script)</span>`,
+  projects: () => `<span class="p">f3i</span>           platform connecting farms, providers and grant programs\n<span class="p">asset-map</span>     geospatial API for farm assets\n<span class="p">grant-scoring</span> criteria, scores and results for innovation grants\n<span class="d">see the passport stamps above for details</span>`,
+  now: () => `building project access control for F3i (phase 8)\nlearning: <span class="d">add what you're learning</span>`,
+  hire: () => `email: hello@yourdomain.com\ngithub: github.com/rowanhosam\nstatus: <span class="p">open to work</span>`,
+  sudo: () => `nice try. you need clearance ROOT. check the ID card.`,
+  ls: () => `about.txt  skills/  projects/  stamps/  secret.txt`,
+  'cat secret.txt': () => `I write the tests before the bug report arrives.`,
+};
+function esc(s) { return s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]); }
+function run(input) {
+  const c = input.trim().toLowerCase();
+  if (!c) return;
+  if (c === 'clear') { out.innerHTML = ''; return; }
+  const fn = CMDS[c] || (c.startsWith('sudo') ? CMDS.sudo : null);
+  out.innerHTML += `<span class="p">$</span> ${esc(input)}\n${fn ? fn() : `command not found: ${esc(c)}. try <span class="p">help</span>`}\n\n`;
+  out.scrollTop = out.scrollHeight;
+}
+document.getElementById('termForm').onsubmit = e => { e.preventDefault(); run(cmd.value); cmd.value = ''; };
+const chips = document.getElementById('chips');
+['help', 'whoami', 'skills', 'stack', 'projects', 'now', 'hire', 'ls'].forEach(c => {
+  const b = document.createElement('button'); b.type = 'button'; b.textContent = c; b.onclick = () => run(c); chips.appendChild(b);
+});
+out.innerHTML = `<span class="d">rowan-os 1.0 · type help to begin</span>\n\n`;
+run('whoami'); run('skills');
+
+// ---------- contact ----------
+document.getElementById('copyBtn').onclick = async e => {
+  const t = document.getElementById('email').textContent;
+  try { await navigator.clipboard.writeText(t); e.target.textContent = 'Copied'; }
+  catch { getSelection().selectAllChildren(document.getElementById('email')); e.target.textContent = 'Selected, press ⌘C'; }
+  setTimeout(() => e.target.textContent = 'Copy email', 1800);
+};
+</script>
+</body>
+</html>
