@@ -57,7 +57,7 @@ body {
 
 /* Role-based layout: sections reorder for the visitor's role (set on <html data-role>) */
 .top { order: 0; } .hero { order: 1; } .facts { order: 2; } .brief { order: 3; }
-#pass { order: 4; } #stamps { order: 5; } #skills { order: 6; } #terminal { order: 7; } #contact { order: 9; }
+#pass { order: 4; scroll-margin-top: 16px; } #stamps, #skills, #terminal, #contact, .brief { scroll-margin-top: 16px; } #stamps { order: 5; } #skills { order: 6; } #terminal { order: 7; } #contact { order: 9; }
 :root[data-role="recruiter"] #stamps { order: 4; }
 :root[data-role="recruiter"] #skills { order: 5; }
 :root[data-role="recruiter"] #pass { order: 6; }
@@ -85,6 +85,15 @@ body {
 .briefgrid div { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; min-width: 0; }
 .briefgrid h3 { font-size: 1.1rem; }
 .briefgrid p { margin: 8px 0 0; color: var(--muted); font-size: .95rem; }
+
+/* floating "next section" arrow, shown until the end of the page */
+.nextbtn { position: fixed; z-index: 40; right: calc(env(safe-area-inset-right, 0px) + 20px); bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+  display: inline-flex; align-items: center; gap: 8px; border: 0; cursor: pointer; padding: 10px 14px 10px 16px; border-radius: 99px;
+  background: var(--ink); color: var(--bg); font: 600 .82rem var(--font-body);
+  box-shadow: 0 12px 28px -12px color-mix(in srgb, var(--ink) 60%, transparent); transition: opacity .3s, translate .3s; }
+.nextbtn svg { width: 14px; height: 14px; animation: nudge 1.6s ease-in-out infinite; }
+@keyframes nudge { 0%, 100% { translate: 0 0; } 50% { translate: 0 3px; } }
+.nextbtn.gone { opacity: 0; translate: 0 12px; pointer-events: none; }
 
 /* access gate */
 .gate { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; overflow-y: auto;
@@ -480,6 +489,8 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
     <span class="label">© 2026 Rowan Elansary</span>
   </footer>
 </div>
+
+<button type="button" class="nextbtn gone" id="nextBtn"><span id="nextLabel">Next</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v11M3 8.5l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 
 <!-- ACCESS GATE: visitors pick a role, the page rearranges for it -->
 <div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle" hidden>
@@ -1127,6 +1138,34 @@ document.getElementById('gateSkip').onclick = () => { applyRole('curious'); clos
 gate.addEventListener('keydown', e => { if (e.key === 'Escape' && !gateForm.hidden) document.getElementById('gateSkip').click(); });
 document.getElementById('visitorChip').onclick = openGate;
 
+// ---------- next-section arrow ----------
+// Steps through the sections in the order the visitor sees them (roles reorder them),
+// and disappears once the end of the page is reached.
+const SECTION_NAMES = { brief: 'Summary', pass: 'ID card', stamps: 'Stamps', skills: 'Skills', terminal: 'Terminal', contact: 'Contact' };
+const nextBtn = document.getElementById('nextBtn'), nextLabel = document.getElementById('nextLabel');
+function sectionsInOrder() {
+  return Object.keys(SECTION_NAMES).map(id => document.getElementById(id))
+    .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
+}
+function nextSection() { return sectionsInOrder().find(s => s.getBoundingClientRect().top > 40); }
+function updateNext() {
+  const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 40;
+  const next = nextSection();
+  nextBtn.classList.toggle('gone', atEnd || !next || !gate.hidden);
+  if (next) { nextLabel.textContent = SECTION_NAMES[next.id]; nextBtn.setAttribute('aria-label', `Scroll to ${SECTION_NAMES[next.id]}`); }
+}
+nextBtn.onclick = () => {
+  const next = nextSection();
+  if (!next) return;
+  next.scrollIntoView({ behavior: motionOK ? 'smooth' : 'auto', block: 'start' });
+  // Some embedded browsers ignore smooth scrolling; if we haven't arrived, jump there.
+  setTimeout(() => { if (Math.abs(next.getBoundingClientRect().top) > 60) next.scrollIntoView({ block: 'start' }); }, 700);
+};
+let nextTick = false;
+addEventListener('scroll', () => { if (!nextTick) { nextTick = true; requestAnimationFrame(() => { nextTick = false; updateNext(); }); } }, { passive: true });
+addEventListener('resize', updateNext);
+new MutationObserver(updateNext).observe(gate, { attributes: true, attributeFilter: ['hidden'] });
+
 // First visit opens the gate; a role in the link or earlier in this visit skips it.
 (() => {
   const [linkRole, linkTrack] = location.hash.slice(1).split('-');
@@ -1137,6 +1176,7 @@ document.getElementById('visitorChip').onclick = openGate;
   applyRole('curious');
   openGate();
 })();
+updateNext();
 </script>
 </body>
 </html>
