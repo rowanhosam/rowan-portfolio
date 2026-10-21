@@ -336,7 +336,7 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
       <span class="label" id="introLabel">Access pass · Holder</span>
       <h1><em>Software</em><br>Engineer.</h1>
       <p class="rotline" aria-live="off">Building <span class="rot" id="rot">full-stack apps</span><i class="caret" aria-hidden="true"></i></p>
-      <p>I build web apps that go all the way to production, research generative AI, and make content for 1.4M followers. I like making things people actually enjoy.</p>
+      <p>I build web apps that go all the way to production, research generative AI, and make content for 1.4M followers on <a href="https://www.tiktok.com/@rowan.hosam" target="_blank" rel="noopener">TikTok</a>. I like making things people actually enjoy.</p>
       <div class="ctas"><a class="primary" id="mainCta" href="#stamps">Explore work →</a><a href="#contact">Let's talk</a></div>
     </div>
     <div class="figure">
@@ -475,7 +475,7 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
         <code id="email">rowanelansary123@gmail.com</code>
         <button type="button" id="copyBtn">Copy email</button>
       </div>
-      <div class="links"><a href="https://linkedin.com/in/rowan-elansary" target="_blank" rel="noopener">LinkedIn ↗</a><a href="https://github.com/rowanhosam" target="_blank" rel="noopener">GitHub ↗</a><a href="https://evenstar-trading.com" target="_blank" rel="noopener">evenstar-trading.com ↗</a></div>
+      <div class="links"><a href="https://linkedin.com/in/rowan-elansary" target="_blank" rel="noopener">LinkedIn ↗</a><a href="https://github.com/rowanhosam" target="_blank" rel="noopener">GitHub ↗</a><a href="https://www.tiktok.com/@rowan.hosam" target="_blank" rel="noopener">TikTok ↗</a><a href="https://evenstar-trading.com" target="_blank" rel="noopener">evenstar-trading.com ↗</a></div>
     </div>
     <span class="label">© 2026 Rowan Elansary</span>
   </footer>
@@ -844,8 +844,8 @@ const STAMPS = [
     d: "Dean's List in Spring 2025 and a Cybersecurity Fundamentals Certificate, in the accelerated CS B.S./M.S. program at Fresno State (expected December 2027)." },
   { t: "My iOS Apps", y: "Now", p: "Swift · SwiftUI", shape: "oval", c: "--stamp-red", r: -6,
     d: "On my own time I build iPhone apps in Swift and SwiftUI, from idea to working app, outside school and work." },
-  { t: "1.4M Followers", y: "Now", p: "Creator · Madera K-16", shape: "round", c: "--stamp-red", r: 5,
-    d: "I make content on my own social accounts, followed by 1.4M people. Doing that taught me what makes people stop, watch and come back, and I bring the same instinct to software: building things people actually enjoy using. I also run the website and social media for the Madera K-16 Collaborative at Fresno State as its Website & Social Media Intern." },
+  { t: "1.4M Followers", y: "Now", p: "TikTok · Madera K-16", shape: "round", c: "--stamp-red", r: 5,
+    d: "I make content on TikTok (<a href='https://www.tiktok.com/@rowan.hosam' target='_blank' rel='noopener'>@rowan.hosam</a>), followed by 1.4M people. Doing that taught me what makes people stop, watch and come back, and I bring the same instinct to software: building things people actually enjoy using. I also run the website and social media for the Madera K-16 Collaborative at Fresno State as its Website & Social Media Intern." },
 ];
 const grid = document.getElementById('stampGrid'), rec = document.getElementById('record');
 function showStamp(i) {
@@ -885,7 +885,7 @@ const SKILLS = [
   ['AI & machine learning', ['PyTorch', 'OpenCV', 'Computer vision (YOLOv8)', 'RAG', 'Generative AI evaluation', 'Voice cloning (TTS)']],
   ['Cloud & DevOps', ['Microsoft Azure', 'Docker', 'Linux (Ubuntu)', 'Git', 'GitHub', 'GitHub Projects']],
   ['Practices', ['SDLC', 'Agile (2-week sprints)', 'CI & pull-request workflow', 'Code reviews', 'Automated testing', 'Debugging production issues', 'Vulnerability remediation', 'AI-assisted dev (Copilot, Cursor, Claude Code)']],
-  ['Content & web', ['Content creation|1.4M followers', 'Social media', 'Website management', 'Hosting & deployments']],
+  ['Content & web', ['Content creation|1.4M on TikTok', 'Social media', 'Website management', 'Hosting & deployments']],
 ];
 document.getElementById('skillGrid').innerHTML = SKILLS.map(([cat, items]) => `<div class="skillcard"><h3>${esc(cat)}</h3><div class="chipset">${
   items.map(s => { const [name, note] = s.split('|'); return `<span>${esc(name)}${note ? ` <small>${esc(note)}</small>` : ''}</span>`; }).join('')
@@ -895,7 +895,7 @@ document.getElementById('skillGrid').innerHTML = SKILLS.map(([cat, items]) => `<
 const out = document.getElementById('out'), cmd = document.getElementById('cmd');
 const CMDS = {
   help: () => `available commands:\n  <span class="p">whoami</span>      who is this\n  <span class="p">skills</span>      what I can do\n  <span class="p">stack</span>       tools I use\n  <span class="p">experience</span>  where I've worked\n  <span class="p">projects</span>    things I've built\n  <span class="p">now</span>         what I'm working on\n  <span class="p">hire</span>        how to reach me\n  <span class="p">ask</span> …       ask me anything (AI, based on my CV, 6 per visitor)\n  <span class="p">clear</span>       wipe the screen`,
-  whoami: () => `Rowan Elansary. Software engineer and CS student at Fresno State.\n1+ years across 5 internships: production web apps, APIs, data pipelines and AI research.\nI also make content for 1.4M followers. I like building things people enjoy.`,
+  whoami: () => `Rowan Elansary. Software engineer and CS student at Fresno State.\n1+ years across 5 internships: production web apps, APIs, data pipelines and AI research.\nI also make content for 1.4M followers on TikTok. I like building things people enjoy.`,
   skills: () => SKILLS.map(([a, items]) => `<span class="p">${a.padEnd(15)}</span><span class="d">${items.map(s => s.replace('|', ' ')).join(', ')}</span>`).join('\n'),
   stack: () => `c# · python · java · c++ · javascript · typescript · sql · swift\nreact · tailwind · svelte · fastapi · node · express\npostgresql · sql server · bigquery · sqlalchemy · pyspark\nazure · docker · linux · git`,
   experience: () => [
@@ -909,7 +909,7 @@ const CMDS = {
   ].map(([a, b]) => `<span class="p">${a.padEnd(10)}</span>${b}`).join('\n'),
   projects: () => `<span class="p">progress-projection</span>   job costing + subcontracts, Next.js + .NET + ERP\n<span class="p">survey-apps</span>           2 survey apps + dashboards for Lyles subsidiaries;\n                      emails go out only once the work order or project has closed\n<span class="p">service-pipeline</span>      ERP + Microsoft Graph, every 15 minutes\n<span class="p">readiness-engine</span>      Svelte + FastAPI + PostgreSQL, TRL/CRL scoring\n<span class="p">evenstar-trading</span>      membership site, 2,000+ users\n<span class="p">personal-ios</span>          my own iPhone apps in Swift + SwiftUI\n<span class="p">hibiki-ai</span>             talk with a person from history; I built its synthetic-media filter\n<span class="p">vision-3d</span>             YOLOv8 + depth cameras, 91% accuracy\n<span class="d">see the passport stamps for details</span>`,
   now: () => `building job-costing workflows at Lyles in Next.js and .NET\nadding to Hibiki-AI's video pipeline at Fresno State\nrunning web + social for the Madera K-16 Collaborative\nmaking my own iPhone apps in Swift`,
-  hire: () => `email:    rowanelansary123@gmail.com\nlinkedin: linkedin.com/in/rowan-elansary\ngithub:   github.com/rowanhosam\nstatus:   <span class="p">open to a Summer 2027 internship</span>`,
+  hire: () => `email:    rowanelansary123@gmail.com\nlinkedin: linkedin.com/in/rowan-elansary\ngithub:   github.com/rowanhosam\ntiktok:   tiktok.com/@rowan.hosam\nstatus:   <span class="p">open to a Summer 2027 internship</span>`,
   sudo: () => `nice try. you need clearance ROOT. check the ID card.`,
   ls: () => `about.txt  skills/  projects/  stamps/  secret.txt`,
   'cat secret.txt': () => `I review and test every line an AI writes for me. Including this site.`,
@@ -1011,7 +1011,7 @@ const TRACKS = {
     name: 'App / UX design', word: 'app designs',
     chips: ['SwiftUI', 'iOS', 'React', 'Next.js', 'Tailwind', 'Responsive UI', 'Content creation', 'Social media', 'TypeScript', 'Git'],
     stamps: ['1.4M Followers', 'My iOS Apps', '2,000+ Users', "People's Choice", 'Job-Costing Platform', '2 Apps in Prod'],
-    what: 'Things people enjoy using: content followed by 1.4M people, my own iPhone apps in SwiftUI, the Madera K-16 website and social media, and the design of this site.',
+    what: 'Things people enjoy using: TikTok content followed by 1.4M people, my own iPhone apps in SwiftUI, the Madera K-16 website and social media, and the design of this site.',
     ask: 'What apps have you designed?',
   },
   ai: {
