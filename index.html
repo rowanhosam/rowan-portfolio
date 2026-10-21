@@ -380,7 +380,7 @@ soundBtn.onclick = () => {
 
 // Transparent video: Safari plays HEVC with alpha, everyone else plays VP9 WebM with alpha.
 const isSafari = /^((?!chrome|chromium|crios|fxios|android|edg).)*safari/i.test(navigator.userAgent);
-vid.src = isSafari ? 'media/intro-hevc.mov' : 'media/intro.webm';
+vid.src = isSafari ? 'media/intro-hevc.mp4' : 'media/intro.webm';
 vid.addEventListener('loadeddata', () => {
   vid.hidden = false; still.hidden = true;
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setPlaying(true); else setPlaying(false);

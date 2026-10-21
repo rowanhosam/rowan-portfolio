@@ -11,7 +11,7 @@ A one-page portfolio built around an access-pass idea:
 
 | What | Where |
 | --- | --- |
-| Intro video | transparent `media/intro.webm` (Chrome) + `media/intro-hevc.mov` (Safari) |
+| Intro video | transparent `media/intro.webm` (Chrome) + `media/intro-hevc.mp4` (Safari) |
 | Captions | `CAPTIONS` array in the script (times in seconds) |
 | Photo on the card | `media/photo.png` |
 | Achievements | `STAMPS` array (remove `example: true` once real) |
