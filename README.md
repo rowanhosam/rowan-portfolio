@@ -11,9 +11,9 @@ A one-page portfolio built around an access-pass idea:
 
 | What | Where |
 | --- | --- |
-| Intro video | add `intro.mp4` next to `index.html` (portrait 4:5 works best) |
+| Intro video | transparent `media/intro.webm` (Chrome) + `media/intro-hevc.mov` (Safari) |
 | Captions | `CAPTIONS` array in the script (times in seconds) |
-| Photo on the card | add `photo.jpg` next to `index.html` |
+| Photo on the card | `media/photo.png` |
 | Achievements | `STAMPS` array (remove `example: true` once real) |
 | Terminal answers | `CMDS` object |
 | Email | search for `hello@yourdomain.com` |

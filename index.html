@@ -63,40 +63,40 @@ button { font: inherit; color: inherit; }
 .top nav a { color: var(--muted); text-decoration: none; font: 500 .9rem var(--font-body); }
 .top nav a:hover { color: var(--ink); }
 
-/* hero */
-.hero { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: center; padding-block: 24px 72px; }
-.hero h1 { font-size: clamp(2.6rem, 6.4vw, 5.2rem); font-weight: 800; letter-spacing: -.035em; }
-.hero h1 em { font-style: normal; color: var(--accent); }
-.hero p.lede { font-size: 1.15rem; color: var(--muted); max-width: 46ch; margin: 22px 0 0; }
-.hero .meta { display: flex; gap: 28px; margin-top: 30px; flex-wrap: wrap; }
-.hero .meta div { display: grid; gap: 6px; }
-.hero .meta b { font: 700 1.05rem var(--font-display); }
-
-/* talking tile */
-.tile { position: relative; aspect-ratio: 4 / 5; max-width: 100%; border-radius: 30px; overflow: hidden;
-  background: radial-gradient(120% 80% at 50% 100%, var(--accent-soft), var(--paper) 70%); border: 1px solid var(--line); }
-.tile video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.tile .rec { position: absolute; top: 16px; left: 16px; display: flex; gap: 8px; align-items: center; z-index: 3;
-  font: 600 .7rem var(--font-mono); letter-spacing: .12em; background: color-mix(in srgb, var(--paper) 80%, transparent); padding: 7px 10px; border-radius: 99px; }
+/* hero: full-body cut-out standing on the page, giant name behind */
+.hero { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr);
+  grid-template-areas: "intro figure side"; align-items: end; gap: 24px; padding-top: 8px; isolation: isolate; }
+.bigname { position: absolute; inset: 4% 0 auto; z-index: -1; text-align: center; pointer-events: none; user-select: none;
+  font: 800 clamp(6rem, 24vw, 21rem)/.8 var(--font-display); letter-spacing: -.06em; color: var(--ink); opacity: .06; }
+.figure { grid-area: figure; position: relative; height: clamp(420px, 64vw, 660px); aspect-ratio: 736 / 1248; max-width: 100%; justify-self: center; }
+.figure video, .figure img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: bottom; }
+.figure::after { content: ""; position: absolute; left: 18%; right: 18%; bottom: 0; height: 18px; z-index: -1; border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--ink) 22%, transparent), transparent); }
+.intro { grid-area: intro; padding-bottom: 48px; min-width: 0; }
+.intro h1 { font-size: clamp(2.8rem, 6vw, 5.4rem); font-weight: 800; letter-spacing: -.04em; margin-top: 14px; }
+.intro h1 em { font-style: normal; color: var(--accent); }
+.intro p { color: var(--muted); max-width: 34ch; margin: 18px 0 0; }
+.ctas { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px; }
+.ctas a { text-decoration: none; padding: 12px 20px; border-radius: 99px; font-weight: 600; border: 1px solid var(--ink); color: var(--ink); }
+.ctas a.primary { background: var(--ink); color: var(--bg); }
+.side { grid-area: side; align-self: center; display: grid; gap: 16px; justify-items: start; min-width: 0; }
+.bubble { position: relative; background: var(--paper); border: 1px solid var(--line); border-radius: 20px 20px 20px 6px;
+  padding: 14px 18px; font: 500 1.05rem/1.45 var(--font-body); max-width: 30ch; min-height: 3.3em;
+  box-shadow: 0 18px 40px -24px color-mix(in srgb, var(--ink) 40%, transparent); }
+.bubble span { opacity: .3; transition: opacity .15s; }
+.bubble span.on { opacity: 1; }
+.rec { display: flex; gap: 8px; align-items: center; font: 600 .7rem var(--font-mono); letter-spacing: .12em; color: var(--muted); }
 .rec i { width: 8px; height: 8px; border-radius: 50%; background: var(--stamp-red); animation: blink 1.4s infinite; }
 @keyframes blink { 50% { opacity: .25; } }
-.tile .ctrls { position: absolute; top: 16px; right: 16px; display: flex; gap: 8px; z-index: 3; }
-.ctrls button, .ctrls label { border: 0; cursor: pointer; background: color-mix(in srgb, var(--paper) 80%, transparent); width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; }
-.ctrls svg { width: 16px; height: 16px; fill: var(--ink); }
-.ctrls input { position: absolute; width: 1px; height: 1px; opacity: 0; }
-.caption { position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 3; padding: 14px 16px; border-radius: 18px;
-  background: color-mix(in srgb, var(--ink) 88%, transparent); color: var(--bg); font: 500 1.02rem/1.4 var(--font-body); min-height: 3.6em; }
-.caption span { opacity: .38; transition: opacity .15s; }
-.caption span.on { opacity: 1; }
-
-/* the avatar stand-in */
-.avatar { position: absolute; inset: 0; display: grid; place-items: end center; }
-.avatar svg { width: 82%; height: auto; }
-.avatar .mouth { transform-origin: 160px 176px; transform: scaleY(var(--mouth, .15)); }
-.avatar .eyes { transform-origin: 160px 140px; animation: eyes 5s infinite; }
-@keyframes eyes { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.1); } }
-.tile.has-video .avatar { display: none; }
-.tilehint { margin-top: 12px; font-size: .85rem; color: var(--muted); }
+.vctrl { display: flex; gap: 8px; }
+.vctrl button { border: 1px solid var(--line); background: var(--paper); cursor: pointer; height: 40px; padding: 0 14px; border-radius: 99px;
+  display: inline-flex; align-items: center; gap: 8px; font: 600 .82rem var(--font-body); }
+.vctrl svg { width: 14px; height: 14px; fill: var(--ink); }
+.vctrl #soundBtn.live { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+.vctrl #soundBtn.live svg { fill: var(--paper); }
+.hero + .facts { display: flex; gap: 28px 40px; flex-wrap: wrap; padding-block: 22px 56px; border-top: 1px solid var(--line); }
+.facts div { display: grid; gap: 6px; }
+.facts b { font: 700 1.05rem var(--font-display); }
 
 /* sections */
 section.block { padding-block: 72px; border-top: 1px solid var(--line); }
@@ -123,7 +123,7 @@ section.block { padding-block: 72px; border-top: 1px solid var(--line); }
   font: 600 2.6cqw var(--font-mono); letter-spacing: .18em; color: var(--paper); }
 .photo { margin-top: 10cqw; border-radius: 3cqw; background: var(--accent-soft); display: grid; place-items: center; overflow: hidden; position: relative; z-index: 1; border: 1.2cqw solid var(--paper); }
 .photo b { font: 800 13cqw var(--font-display); color: var(--accent); }
-.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; background: var(--accent-soft); }
 .fields { margin-top: 13cqw; display: grid; align-content: start; gap: 2.4cqw; min-width: 0; position: relative; z-index: 1; }
 .fields .nm { font: 800 7.4cqw/0.95 var(--font-display); letter-spacing: -.02em; }
 .fields .rl { font: 600 3.3cqw var(--font-body); color: var(--accent); }
@@ -192,12 +192,18 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
 .contact button { border: 0; background: var(--accent); color: var(--paper); padding: 11px 16px; border-radius: 10px; cursor: pointer; font-weight: 600; }
 
 @media (max-width: 820px) {
-  .hero, .head, .cardstage { grid-template-columns: minmax(0, 1fr); }
-  .tile { max-width: 380px; }
+  .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "figure side" "intro intro"; }
+  .figure { height: clamp(360px, 92vw, 520px); }
+  .intro { padding-bottom: 32px; }
+  .head, .cardstage { grid-template-columns: minmax(0, 1fr); }
   .stamps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .record { grid-template-columns: minmax(0, 1fr); }
 }
-@media (max-width: 460px) { .stamps { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 460px) {
+  .stamps { grid-template-columns: minmax(0, 1fr); }
+  .hero { grid-template-columns: minmax(0, 1fr); grid-template-areas: "figure" "side" "intro"; }
+  .side { justify-items: center; }
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
@@ -211,42 +217,33 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
     <nav><a href="#pass">Pass</a><a href="#stamps">Stamps</a><a href="#terminal">Terminal</a><a href="#contact">Contact</a></nav>
   </header>
 
-  <!-- HERO: talking tile -->
+  <!-- HERO: talking full-body cut-out -->
   <section class="hero">
-    <div>
-      <div class="tile" id="tile">
-        <div class="rec"><i></i><span id="recLabel">ON AIR · INTRO</span></div>
-        <div class="ctrls">
-          <button type="button" id="playBtn" aria-label="Pause intro"><svg viewBox="0 0 16 16" id="playIcon"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg></button>
-          <button type="button" id="soundBtn" aria-label="Turn sound on" hidden><svg viewBox="0 0 16 16"><path d="M2 6h3l4-3v10l-4-3H2z"/><path d="M11 5.5c1 .7 1 4.3 0 5" stroke="currentColor" fill="none"/></svg></button>
-          <label for="vidFile" aria-label="Preview with your own video" title="Preview with your own video"><svg viewBox="0 0 16 16"><path d="M7 3h2v4h4v2H9v4H7V9H3V7h4z"/></svg><input type="file" id="vidFile" accept="video/*"></label>
-        </div>
-        <div class="avatar" aria-hidden="true">
-          <svg viewBox="0 0 320 300">
-            <path d="M40 300c6-62 52-92 120-92s114 30 120 92z" fill="var(--ink)"/>
-            <rect x="136" y="180" width="48" height="40" rx="14" fill="#c98f6b"/>
-            <ellipse cx="160" cy="140" rx="62" ry="70" fill="#d9a07c"/>
-            <path d="M96 128c-4-52 28-78 66-78s68 26 62 80c-10-26-30-40-62-42-30 2-54 14-66 40z" fill="var(--ink)"/>
-            <g class="eyes"><ellipse cx="136" cy="140" rx="5" ry="6" fill="var(--ink)"/><ellipse cx="184" cy="140" rx="5" ry="6" fill="var(--ink)"/></g>
-            <ellipse class="mouth" cx="160" cy="176" rx="16" ry="11" fill="#6b2a2a"/>
-          </svg>
-        </div>
-        <video id="vid" playsinline muted loop preload="metadata" hidden></video>
-        <div class="caption" id="caption" aria-live="polite"></div>
-      </div>
-      <p class="tilehint">Stand-in avatar. Drop <code>intro.mp4</code> next to the page and it plays here, with these captions.</p>
-    </div>
-    <div>
+    <div class="bigname" aria-hidden="true">ROWAN</div>
+    <div class="intro">
       <span class="label">Access pass · Holder</span>
-      <h1 style="margin-top:14px">I build the <em>backend</em> that keeps products honest.</h1>
-      <p class="lede">APIs, databases and the access rules in between. I care about clean data, fast endpoints and systems that are hard to misuse.</p>
-      <div class="meta">
-        <div><span class="label">Based in</span><b>Your city</b></div>
-        <div><span class="label">Currently</span><b>Building F3i</b></div>
-        <div><span class="label">Status</span><b>Open to work</b></div>
+      <h1><em>Backend</em><br>Engineer.</h1>
+      <p>APIs, databases and the access rules in between. I build systems that are fast, clean and hard to misuse.</p>
+      <div class="ctas"><a class="primary" href="#stamps">Explore work →</a><a href="#contact">Let's talk</a></div>
+    </div>
+    <div class="figure">
+      <img id="still" src="media/still.png" alt="Rowan Elansary">
+      <video id="vid" playsinline muted loop preload="auto" aria-label="Rowan's video introduction" hidden></video>
+    </div>
+    <div class="side">
+      <div class="rec"><i></i><span>ON AIR · INTRO</span></div>
+      <div class="bubble" id="caption" aria-live="polite"></div>
+      <div class="vctrl">
+        <button type="button" id="soundBtn"><svg viewBox="0 0 16 16"><path d="M2 6h3l4-3v10l-4-3H2z"/><path d="M11 5.5c1 .7 1 4.3 0 5" stroke="currentColor" fill="none"/></svg><span>Hear me</span></button>
+        <button type="button" id="playBtn" aria-label="Pause intro"><svg viewBox="0 0 16 16" id="playIcon"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg></button>
       </div>
     </div>
   </section>
+  <div class="facts">
+    <div><span class="label">Based in</span><b>Your city</b></div>
+    <div><span class="label">Currently</span><b>Building F3i</b></div>
+    <div><span class="label">Status</span><b>Open to work</b></div>
+  </div>
 
   <!-- ID CARD -->
   <section class="block" id="pass">
@@ -261,7 +258,7 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
           <button class="idcard" id="idcard" type="button" aria-label="ID card, front. Press to flip.">
             <div class="face front">
               <div class="org"><span>ACCESS PASS</span><span>№ RE-0008</span></div>
-              <div class="photo"><b>RE</b><img src="photo.jpg" alt="" onerror="this.remove()"></div>
+              <div class="photo"><b>RE</b><img src="media/photo.png" alt="" onerror="this.remove()"></div>
               <div class="fields">
                 <div class="nm">Rowan<br>Elansary</div>
                 <div class="rl">Backend Engineer</div>
@@ -345,58 +342,49 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
 </div>
 
 <script>
-// ---------- talking tile ----------
+// ---------- talking hero ----------
+// Caption times are seconds into media/intro video. Update when the full-length intro lands.
 const CAPTIONS = [
-  { t: 0,    s: "Hi, I'm Rowan." },
-  { t: 2.2,  s: "I'm a backend engineer." },
-  { t: 4.6,  s: "I design APIs, databases and the access rules that keep data safe." },
-  { t: 9.6,  s: "Right now I'm building F3i, a platform that connects farms with the people who can help them." },
-  { t: 15.8, s: "Flip my ID card, read my stamps, or ask my terminal what I can do." },
+  { t: 0, s: "Hi, I'm Rowan. I'm a backend engineer." },
 ];
-const LOOP = 21.5;
-const tile = document.getElementById('tile'), vid = document.getElementById('vid');
+const vid = document.getElementById('vid'), still = document.getElementById('still');
 const capEl = document.getElementById('caption'), playBtn = document.getElementById('playBtn'), soundBtn = document.getElementById('soundBtn');
-let mode = 'avatar', playing = true, clock = 0, last = performance.now(), shownLine = -1;
+let shownLine = -1;
 
-function lineAt(t) { let i = 0; CAPTIONS.forEach((c, k) => { if (t >= c.t) i = k; }); return i; }
-function render(t) {
-  const i = lineAt(t), line = CAPTIONS[i];
-  const end = (CAPTIONS[i + 1]?.t ?? LOOP) - 0.5;
+function render() {
+  const t = vid.currentTime || 0, dur = vid.duration || 4;
+  let i = 0; CAPTIONS.forEach((c, k) => { if (t >= c.t) i = k; });
+  const line = CAPTIONS[i], end = CAPTIONS[i + 1]?.t ?? dur;
   if (i !== shownLine) { capEl.innerHTML = line.s.split(' ').map(w => `<span>${w}</span>`).join(' '); shownLine = i; }
-  const words = capEl.children, frac = Math.min(1, (t - line.t) / Math.max(.1, end - line.t - .4));
-  for (let k = 0; k < words.length; k++) words[k].classList.toggle('on', k < Math.ceil(frac * words.length) || frac >= 1);
-  const talking = mode === 'avatar' && playing && t < end;
-  tile.style.setProperty('--mouth', talking ? (.25 + Math.abs(Math.sin(t * 13)) * .75 * Math.abs(Math.sin(t * 3.1))).toFixed(2) : .15);
+  const frac = Math.min(1, (t - line.t) / Math.max(.1, end - line.t - .3));
+  [...capEl.children].forEach((w, k) => w.classList.toggle('on', k < Math.ceil(frac * capEl.children.length)));
+  requestAnimationFrame(render);
 }
-function tick(now) {
-  if (mode === 'avatar' && playing) clock = (clock + (now - last) / 1000) % LOOP;
-  if (mode === 'video') clock = vid.currentTime % LOOP;
-  last = now; render(clock); requestAnimationFrame(tick);
-}
-requestAnimationFrame(tick);
+requestAnimationFrame(render);
 
 function setPlaying(p) {
-  playing = p;
-  if (mode === 'video') p ? vid.play().catch(() => {}) : vid.pause();
+  p ? vid.play().catch(() => {}) : vid.pause();
   playBtn.setAttribute('aria-label', p ? 'Pause intro' : 'Play intro');
   document.getElementById('playIcon').innerHTML = p
     ? '<rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/>'
     : '<path d="M4 2l10 6-10 6z"/>';
 }
-playBtn.onclick = () => setPlaying(!playing);
-soundBtn.onclick = () => { vid.muted = !vid.muted; soundBtn.setAttribute('aria-label', vid.muted ? 'Turn sound on' : 'Mute'); soundBtn.style.opacity = vid.muted ? .6 : 1; };
+playBtn.onclick = () => setPlaying(vid.paused);
+soundBtn.onclick = () => {
+  vid.muted = !vid.muted;
+  if (!vid.muted) vid.currentTime = 0;
+  soundBtn.classList.toggle('live', !vid.muted);
+  soundBtn.querySelector('span').textContent = vid.muted ? 'Hear me' : 'Mute';
+  setPlaying(true);
+};
 
-function useVideo(src) {
-  vid.src = src;
-  vid.addEventListener('loadeddata', () => {
-    mode = 'video'; vid.hidden = false; soundBtn.hidden = false; tile.classList.add('has-video');
-    document.getElementById('recLabel').textContent = 'ON AIR · LIVE';
-    setPlaying(true);
-  }, { once: true });
-}
-vid.addEventListener('error', () => { mode = 'avatar'; vid.hidden = true; });
-useVideo('intro.mp4');
-document.getElementById('vidFile').onchange = e => { const f = e.target.files[0]; if (f) useVideo(URL.createObjectURL(f)); };
+// Transparent video: Safari plays HEVC with alpha, everyone else plays VP9 WebM with alpha.
+const isSafari = /^((?!chrome|chromium|crios|fxios|android|edg).)*safari/i.test(navigator.userAgent);
+vid.src = isSafari ? 'media/intro-hevc.mov' : 'media/intro.webm';
+vid.addEventListener('loadeddata', () => {
+  vid.hidden = false; still.hidden = true;
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setPlaying(true); else setPlaying(false);
+}, { once: true });
 
 // ---------- ID card ----------
 const card = document.getElementById('idcard'), scene = document.getElementById('scene');
