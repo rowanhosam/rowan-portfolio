@@ -10,7 +10,7 @@ Edit this file to change what the chat assistant knows. Lines starting with
 - Email: rowanelansary123@gmail.com
 - LinkedIn: linkedin.com/in/rowan-elansary
 - GitHub: github.com/rowanhosam
-- Experience: 1+ years across 4 internships, plus two research assistant roles
+- Experience: 1+ years across 5 internships, plus two research assistant roles
 - Availability: open to a Summer 2027 internship (May to September), then
   returning to full-time studies.
 
@@ -30,6 +30,7 @@ Claude Code) while reviewing and testing all generated code.
 ## Experience
 - AI & Innovation Intern, Lyles Construction Group (Lyles Services Co.), Fresno, CA.
   Aug 2026 to present.
+  - Builds full web apps with C# and React.
   - Owned the design and build of 2 full-stack applications in production,
     including a customer satisfaction system with React, Node.js/Express REST
     APIs and SQL Server on Azure.
@@ -41,7 +42,10 @@ Claude Code) while reviewing and testing all generated code.
   - Helps build and integrate a Swift app for iPhone and Mac, used internally and
     by partner companies, connected to an Azure API and SQL Server back end.
   - Works in 2-week Agile sprints with weekly stand-ups and code reviews.
+- Website & Social Media Intern, Madera K-16 Collaborative, Fresno State. Current.
+  - Runs the collaborative's website and social media channels.
 - Full Stack Developer Intern, F3 Innovate, Fresno, CA. May 2026 to Aug 2026.
+  - Svelte was used only here, for the front end.
   - Built a research-projects inventory feature end to end: Svelte UI,
     Python/FastAPI REST endpoints and PostgreSQL data models, including a TRL/CRL
     readiness-scoring engine.
@@ -73,14 +77,15 @@ Claude Code) while reviewing and testing all generated code.
   background removed frame by frame.
 
 ## Skills
-- Languages: Python (1+ years), Java, C++, JavaScript, TypeScript, SQL, Swift,
+- Languages: Python (1+ years), C#, Java, C++, JavaScript, TypeScript, SQL, Swift,
   Objective-C, HTML, CSS
-- Back end: REST APIs, Node.js, Express, FastAPI, asynchronous services, JWT
+- Back end: C#, REST APIs, Node.js, Express, FastAPI, asynchronous services, JWT
   authentication, third-party API integrations (ERP, Microsoft Graph)
-- Front end and mobile: React, Svelte, Tailwind CSS, responsive UI, SwiftUI, iOS, macOS
+- Front end and mobile: React (current work), Svelte (at F3 Innovate), Tailwind CSS, responsive UI, SwiftUI, iOS, macOS
 - Data: SQL Server, PostgreSQL, BigQuery, SQLAlchemy, data modeling, data
   pipelines, Apache Spark (PySpark), data validation
 - AI and ML: PyTorch, computer vision (YOLOv8), RAG, generative AI model evaluation
 - Cloud and DevOps: Microsoft Azure, Docker, Linux (Ubuntu), Git, GitHub, GitHub Projects
+- Web and social media: website management, social media content
 - Practices: SDLC, Agile, code reviews, testing, debugging production issues,
   vulnerability remediation, AI-assisted development

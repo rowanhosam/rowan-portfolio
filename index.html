@@ -213,7 +213,8 @@ section.block { padding-block: 72px; border-top: 1px solid var(--line); }
 /* passport stamps */
 .passport { background: var(--paper); border: 1px solid var(--line); border-radius: 22px; padding: clamp(18px, 4vw, 40px);
   background-image: repeating-radial-gradient(circle at 20% 30%, transparent 0 14px, color-mix(in srgb, var(--accent) 7%, transparent) 14px 15px); }
-.stamps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 20px; }
+.stamps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 26px 14px; }
+@media (max-width: 1000px) { .stamps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .stamp { all: unset; cursor: pointer; justify-self: center; display: grid; place-items: center; text-align: center; color: var(--c);
   border: 3px solid var(--c); padding: 18px 20px; width: min(230px, 100%); min-height: 150px; transform: rotate(var(--r));
   transition: transform .25s; position: relative; mix-blend-mode: multiply; }
@@ -222,7 +223,7 @@ section.block { padding-block: 72px; border-top: 1px solid var(--line); }
 .stamp.oval { border-radius: 50% / 38%; }
 .stamp:hover, .stamp:focus-visible, .stamp.sel { transform: rotate(0deg) scale(1.05); }
 .stamp .y { font: 600 .7rem var(--font-mono); letter-spacing: .2em; }
-.stamp .t { font: 800 1.15rem/1.05 var(--font-display); text-transform: uppercase; letter-spacing: -.01em; margin: 6px 0; }
+.stamp .t { font: 800 1.02rem/1.05 var(--font-display); text-transform: uppercase; letter-spacing: -.01em; margin: 6px 0; }
 .stamp .p { font: 600 .66rem var(--font-mono); letter-spacing: .14em; text-transform: uppercase; }
 .stamp.example { opacity: .55; border-style: dashed; }
 .record { margin-top: 32px; padding-top: 22px; border-top: 1px dashed var(--line); display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 18px; }
@@ -288,7 +289,7 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
     <div class="intro">
       <span class="label" id="introLabel">Access pass · Holder</span>
       <h1><em>Full-stack</em><br>Engineer.</h1>
-      <p>React and Svelte up front, FastAPI and Node behind, SQL underneath. I build apps that go all the way to production, plus AI research on the side.</p>
+      <p>React up front, C#, Node and FastAPI behind it, SQL underneath. I build full web apps that go all the way to production, plus AI research on the side.</p>
       <div class="ctas"><a class="primary" id="mainCta" href="#stamps">Explore work →</a><a href="#contact">Let's talk</a></div>
     </div>
     <div class="figure">
@@ -357,7 +358,7 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
               <div class="backbody">
                 <div>
                   <div class="sig">Rowan Elansary</div>
-                  <div class="clear"><i>React</i><i>Svelte</i><i>Node.js</i><i>FastAPI</i><i>PostgreSQL</i><i>SQL Server</i><i>Azure</i><i>Swift</i><i>PyTorch</i></div>
+                  <div class="clear"><i>React</i><i>C#</i><i>Node.js</i><i>FastAPI</i><i>PostgreSQL</i><i>SQL Server</i><i>Azure</i><i>Swift</i><i>PyTorch</i></div>
                 </div>
                 <div class="barcode" id="barcode"></div>
               </div>
@@ -581,14 +582,14 @@ const bc = document.getElementById('barcode');
 
 // ---------- stamps ----------
 const STAMPS = [
-  { t: "2 Apps in Prod", y: "2026", p: "Lyles · Full stack", shape: "round", c: "--accent", r: -8,
-    d: "Owned the design and build of 2 full-stack applications in production at Lyles Construction Group, including a customer satisfaction system with React, Node.js/Express REST APIs and SQL Server on Azure." },
+  { t: "2 Apps in Prod", y: "2026", p: "Lyles · C# + React", shape: "round", c: "--accent", r: -8,
+    d: "Building full web apps with C# and React at Lyles Construction Group. Owned the design and build of 2 full-stack applications in production, including a customer satisfaction system with React, Node.js/Express REST APIs and SQL Server on Azure." },
   { t: "15-Min Pipeline", y: "2026", p: "ERP + MS Graph", shape: "", c: "--stamp-green", r: 6,
     d: "Built an automated data pipeline that processes large datasets of service-visit records every 15 minutes, integrating the company ERP and the Microsoft Graph API." },
   { t: "4 Vulns Fixed", y: "2026", p: "Before production", shape: "oval", c: "--stamp-red", r: -4,
     d: "Identified and fixed 4 security and data-integrity vulnerabilities before they reached production, and debug and resolve production issues." },
   { t: "Readiness Engine", y: "2026", p: "F3 Innovate", shape: "", c: "--accent", r: 9,
-    d: "Built a research-projects inventory end to end, from a Svelte UI to FastAPI REST endpoints and PostgreSQL models, including a TRL/CRL readiness-scoring engine. Also implemented JWT authentication and access control for a platform used by farmers, professors and research assistants." },
+    d: "At F3 Innovate, built a research-projects inventory end to end, from a Svelte UI to FastAPI REST endpoints and PostgreSQL models, including a TRL/CRL readiness-scoring engine. Also implemented JWT authentication and access control for a platform used by farmers, professors and research assistants." },
   { t: "91% Detection", y: "2025", p: "Computer vision", shape: "round", c: "--stamp-green", r: 4,
     d: "Built a real-time object detection and 3D localization system in Python with YOLOv8 and depth cameras, reaching 91% detection accuracy." },
   { t: "2,000+ Users", y: "2026", p: "evenstar-trading.com", shape: "oval", c: "--stamp-red", r: -7,
@@ -599,6 +600,8 @@ const STAMPS = [
     d: "Built Python automation scripts that cut reporting time by 80%. Also cleaned, transformed and validated operational healthcare datasets as a Digital Health intern at Valley Children's Hospital." },
   { t: "Dean's List", y: "2025", p: "+ Cybersecurity cert", shape: "oval", c: "--stamp-green", r: -3,
     d: "Dean's List in Spring 2025 and a Cybersecurity Fundamentals Certificate, in the accelerated CS B.S./M.S. program at Fresno State (expected December 2027)." },
+  { t: "Web + Social", y: "Now", p: "Madera K-16 Collab", shape: "round", c: "--accent", r: 5,
+    d: "Website and social media intern for the Madera K-16 Collaborative at Fresno State, running its website and social media channels." },
 ];
 const grid = document.getElementById('stampGrid'), rec = document.getElementById('record');
 function showStamp(i) {
@@ -622,25 +625,27 @@ showStamp(0);
 const out = document.getElementById('out'), cmd = document.getElementById('cmd');
 const CMDS = {
   help: () => `available commands:\n  <span class="p">whoami</span>      who is this\n  <span class="p">skills</span>      what I can do\n  <span class="p">stack</span>       tools I use\n  <span class="p">experience</span>  where I've worked\n  <span class="p">projects</span>    things I've built\n  <span class="p">now</span>         what I'm working on\n  <span class="p">hire</span>        how to reach me\n  <span class="p">ask</span> …       ask me anything (AI, based on my CV, 6 a minute)\n  <span class="p">clear</span>       wipe the screen`,
-  whoami: () => `Rowan Elansary. Full-stack engineer and CS student at Fresno State.\n1+ years across 4 internships: production web apps, APIs, data pipelines and AI research.`,
+  whoami: () => `Rowan Elansary. Full-stack engineer and CS student at Fresno State.\n1+ years across 5 internships: production web apps, APIs, data pipelines, AI research and web + social media.`,
   skills: () => [
-    ['Front end', 'React, Svelte, Tailwind, responsive UI, SwiftUI'],
-    ['Back end', 'REST APIs, FastAPI, Node/Express, async services, JWT auth'],
+    ['Front end', 'React, Tailwind, responsive UI, SwiftUI, Svelte (F3 Innovate)'],
+    ['Back end', 'C#, REST APIs, FastAPI, Node/Express, async services, JWT auth'],
     ['Data', 'PostgreSQL, SQL Server, BigQuery, PySpark, pipelines'],
     ['AI / ML', 'PyTorch, YOLOv8, RAG, generative model evaluation'],
     ['Cloud', 'Azure, Docker, Linux, Git, Agile sprints, code review'],
-  ].map(([a, b]) => `<span class="p">${a.padEnd(11)}</span><span class="d">${b}</span>`).join('\n'),
-  stack: () => `python · java · c++ · javascript · typescript · sql · swift\nreact · svelte · tailwind · fastapi · node · express\npostgresql · sql server · bigquery · sqlalchemy · pyspark\nazure · docker · linux · git`,
+    ['Web + social', 'website management, social media content'],
+  ].map(([a, b]) => `<span class="p">${a.padEnd(14)}</span><span class="d">${b}</span>`).join('\n'),
+  stack: () => `c# · python · java · c++ · javascript · typescript · sql · swift\nreact · tailwind · svelte · fastapi · node · express\npostgresql · sql server · bigquery · sqlalchemy · pyspark\nazure · docker · linux · git`,
   experience: () => [
-    ['2026–now', 'AI & Innovation Intern, Lyles Construction Group'],
-    ['2026', 'Full Stack Developer Intern, F3 Innovate'],
+    ['2026–now', 'AI & Innovation Intern, Lyles Construction Group (C#, React)'],
+    ['now', 'Website & Social Media Intern, Madera K-16 Collaborative, Fresno State'],
+    ['2026', 'Full Stack Developer Intern, F3 Innovate (Svelte, FastAPI)'],
     ['2026–now', 'Research Assistant, Generative AI, Fresno State'],
     ['2025', 'Digital Health Intern, Valley Children\'s Hospital'],
     ['2025', 'Computer Vision Research Assistant, Fresno State'],
     ['2025', 'Data Analyst Intern, Umida Ag & Terra Tech'],
   ].map(([a, b]) => `<span class="p">${a.padEnd(10)}</span>${b}`).join('\n'),
-  projects: () => `<span class="p">customer-satisfaction</span> React + Node/Express + SQL Server on Azure\n<span class="p">service-pipeline</span>      ERP + Microsoft Graph, every 15 minutes\n<span class="p">readiness-engine</span>      Svelte + FastAPI + PostgreSQL, TRL/CRL scoring\n<span class="p">evenstar-trading</span>      membership site, 2,000+ users\n<span class="p">vision-3d</span>             YOLOv8 + depth cameras, 91% accuracy\n<span class="d">see the passport stamps for details</span>`,
-  now: () => `AI & Innovation Intern at Lyles: full-stack apps, data pipelines, a Swift app for iPhone and Mac\nresearching RAG and generative AI at Fresno State`,
+  projects: () => `<span class="p">customer-satisfaction</span> React + C# / Node + SQL Server on Azure\n<span class="p">service-pipeline</span>      ERP + Microsoft Graph, every 15 minutes\n<span class="p">readiness-engine</span>      Svelte + FastAPI + PostgreSQL, TRL/CRL scoring\n<span class="p">evenstar-trading</span>      membership site, 2,000+ users\n<span class="p">vision-3d</span>             YOLOv8 + depth cameras, 91% accuracy\n<span class="d">see the passport stamps for details</span>`,
+  now: () => `AI & Innovation Intern at Lyles: full web apps in C# and React, data pipelines, a Swift app for iPhone and Mac\nWebsite & Social Media Intern, Madera K-16 Collaborative\nresearching RAG and generative AI at Fresno State`,
   hire: () => `email:    rowanelansary123@gmail.com\nlinkedin: linkedin.com/in/rowan-elansary\ngithub:   github.com/rowanhosam\nstatus:   <span class="p">available for a Summer 2027 internship (May–Sept)</span>`,
   sudo: () => `nice try. you need clearance ROOT. check the ID card.`,
   ls: () => `about.txt  skills/  projects/  stamps/  secret.txt`,
@@ -689,7 +694,7 @@ const ROLES = {
     name: 'Recruiter', clearance: 'HR-VIEW', cta: ['See my impact →', '#stamps'], ask: 'When are you available for an internship?',
     briefLabel: 'In 30 seconds',
     brief: [
-      ['What I do', 'Full-stack apps, from React and Svelte UIs to FastAPI and Node APIs and SQL, shipped to production on Azure.'],
+      ['What I do', 'Full web apps with React and C#, plus FastAPI and Node APIs and SQL, shipped to production on Azure.'],
       ['Recent impact', '2 production apps and a 15-minute ERP data pipeline at Lyles; a readiness-scoring feature at F3 Innovate.'],
       ['Availability', 'Summer 2027 internship (May–Sept). CS B.S./M.S. at Fresno State, graduating December 2027.'],
     ],
@@ -698,7 +703,7 @@ const ROLES = {
     name: 'Engineer', clearance: 'DEV-READ', cta: ['Open the terminal →', '#terminal'], ask: 'How does this site’s chat work?',
     briefLabel: 'Under the hood',
     brief: [
-      ['Stack', 'React, Svelte, Tailwind · FastAPI, Node/Express · PostgreSQL, SQL Server, BigQuery · Azure, Docker.'],
+      ['Stack', 'React, Tailwind · C#, FastAPI, Node/Express · PostgreSQL, SQL Server, BigQuery · Azure, Docker. Svelte at F3 Innovate.'],
       ['This site', 'A static page plus a FastAPI chat service that calls Claude Haiku, rate limited per visitor with slowapi.'],
       ['The video', 'AI-generated, background removed frame by frame with BiRefNet, shipped as VP9 and HEVC video with transparency.'],
     ],
