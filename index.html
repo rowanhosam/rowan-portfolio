@@ -10,12 +10,15 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Caveat:wght@600&display=swap">
 <style>
 /* Layout: an "access pass" world. Talking video tile -> flippable CR80 ID card -> passport page of stamps -> terminal. */
+/* Single light "studio" theme on purpose: the cut-out video was shot on cool grey, so the page stays light to blend it. */
 :root {
-  --bg: #e8ecf2;
-  --paper: #f6f8fb;
+  color-scheme: light;
+  --bg: #f1f2f4;
+  --studio: #d4d7dc;
+  --paper: #fafbfc;
   --ink: #131a2a;
-  --muted: #586378;
-  --line: #c9d1de;
+  --muted: #5a6274;
+  --line: #d6dae1;
   --accent: #2b45f5;
   --accent-soft: #d9defd;
   --stamp-red: #b3242f;
@@ -28,18 +31,6 @@
   --font-body: "Instrument Sans", "Helvetica Neue", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
   --font-hand: "Caveat", "Bradley Hand", cursive;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0c1018; --paper: #151b27; --ink: #e7ebf3; --muted: #8e98ab; --line: #273042;
-    --accent: #8394ff; --accent-soft: #1e2650; --stamp-red: #f0717a; --stamp-green: #5fc795;
-    --term-bg: #080b12; color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0c1018; --paper: #151b27; --ink: #e7ebf3; --muted: #8e98ab; --line: #273042;
-  --accent: #8394ff; --accent-soft: #1e2650; --stamp-red: #f0717a; --stamp-green: #5fc795;
-  --term-bg: #080b12; color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -70,6 +61,8 @@ button { font: inherit; color: inherit; }
   font: 800 clamp(6rem, 24vw, 21rem)/.8 var(--font-display); letter-spacing: -.06em; color: var(--ink); opacity: .06; }
 .figure { grid-area: figure; position: relative; height: clamp(420px, 64vw, 660px); aspect-ratio: 736 / 1248; max-width: 100%; justify-self: center; }
 .figure video, .figure img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: bottom; }
+.figure::before { content: ""; position: absolute; left: -45%; right: -45%; top: 2%; bottom: -4%; z-index: -1;
+  background: radial-gradient(50% 55% at 50% 45%, var(--studio), color-mix(in srgb, var(--studio) 45%, var(--bg)) 55%, transparent 78%); }
 .figure::after { content: ""; position: absolute; left: 18%; right: 18%; bottom: 0; height: 18px; z-index: -1; border-radius: 50%;
   background: radial-gradient(closest-side, color-mix(in srgb, var(--ink) 22%, transparent), transparent); }
 .intro { grid-area: intro; padding-bottom: 48px; min-width: 0; }
@@ -157,8 +150,6 @@ section.block { padding-block: 72px; border-top: 1px solid var(--line); }
 .stamp { all: unset; cursor: pointer; justify-self: center; display: grid; place-items: center; text-align: center; color: var(--c);
   border: 3px solid var(--c); padding: 18px 20px; width: min(230px, 100%); min-height: 150px; transform: rotate(var(--r));
   transition: transform .25s; position: relative; mix-blend-mode: multiply; }
-:root[data-theme="dark"] .stamp { mix-blend-mode: normal; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .stamp { mix-blend-mode: normal; } }
 .stamp::after { content: ""; position: absolute; inset: 5px; border: 1px solid var(--c); border-radius: inherit; }
 .stamp.round { border-radius: 50%; aspect-ratio: 1; min-height: 0; width: min(190px, 100%); }
 .stamp.oval { border-radius: 50% / 38%; }
