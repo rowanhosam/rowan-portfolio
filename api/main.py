@@ -94,6 +94,7 @@ async def visit(request: Request, body: VisitRequest):
     """Email Rowan when a visitor types their name in the access gate. Free tier: Resend, 3,000 emails/month."""
     key, to = os.getenv("RESEND_API_KEY"), os.getenv("ALERT_EMAIL")
     if not key or not to:
+        LAST_ALERT["status"] = "skipped: RESEND_API_KEY or ALERT_EMAIL is not set on the server"
         return None  # alerts not set up yet; the site works the same
     who = " · ".join(filter(None, [ROLE_NAMES[body.role], TRACK_NAMES.get(body.track)]))
     when = datetime.now(timezone.utc).strftime("%b %d, %Y %H:%M UTC")
@@ -111,14 +112,23 @@ async def visit(request: Request, body: VisitRequest):
             )
         if r.status_code >= 300:
             log.error("Resend error %s: %s", r.status_code, r.text[:200])
+            LAST_ALERT["status"] = f"Resend refused it ({r.status_code}): {r.text[:160]}"
+        else:
+            LAST_ALERT["status"] = "sent"
     except httpx.HTTPError as e:
         log.error("Resend unreachable: %s", e)
+        LAST_ALERT["status"] = f"could not reach Resend: {e}"
     return None
+
+
+LAST_ALERT = {"status": "none sent since the server started"}
 
 
 @app.get("/health")
 async def health():
-    return {"ok": True}
+    # Reports whether alerts are configured and how the last one went; never the key itself.
+    return {"ok": True, "alerts_configured": bool(os.getenv("RESEND_API_KEY") and os.getenv("ALERT_EMAIL")),
+            "last_alert": LAST_ALERT["status"]}
 
 
 @app.post("/ask", response_model=AskResponse)
