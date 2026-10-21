@@ -228,7 +228,7 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
     </div>
     <div class="figure">
       <img id="still" src="media/still.png" alt="Rowan Elansary">
-      <video id="vid" playsinline muted loop preload="auto" aria-label="Rowan's video introduction" hidden></video>
+      <video id="vid" playsinline muted preload="auto" aria-label="Rowan's video introduction" hidden></video>
     </div>
     <div class="side">
       <div class="rec"><i></i><span>ON AIR · INTRO</span></div>
@@ -369,14 +369,23 @@ function setPlaying(p) {
     ? '<rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/>'
     : '<path d="M4 2l10 6-10 6z"/>';
 }
+// Plays once (muted, as browsers require) when someone lands, then rests on the last frame.
+// The sound button restarts it with sound; after it ends it becomes "Replay".
+function setSound(on) {
+  vid.muted = !on;
+  soundBtn.classList.toggle('live', on);
+  soundBtn.querySelector('span').textContent = on ? 'Mute' : 'Hear me';
+}
 playBtn.onclick = () => setPlaying(vid.paused);
 soundBtn.onclick = () => {
-  vid.muted = !vid.muted;
-  if (!vid.muted) vid.currentTime = 0;
-  soundBtn.classList.toggle('live', !vid.muted);
-  soundBtn.querySelector('span').textContent = vid.muted ? 'Hear me' : 'Mute';
-  setPlaying(true);
+  if (vid.ended || vid.muted) { vid.currentTime = 0; setSound(true); playBtn.hidden = false; setPlaying(true); }
+  else setSound(false);
 };
+vid.addEventListener('ended', () => {
+  setSound(false);
+  soundBtn.querySelector('span').textContent = 'Replay';
+  playBtn.hidden = true;
+});
 
 // Transparent video: Safari plays HEVC with alpha, everyone else plays VP9 WebM with alpha.
 const isSafari = /^((?!chrome|chromium|crios|fxios|android|edg).)*safari/i.test(navigator.userAgent);
