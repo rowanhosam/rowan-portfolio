@@ -36,3 +36,11 @@ It only knows what's in `api/profile.md`; lines starting with `TODO` are ignored
 2. Set `ANTHROPIC_API_KEY` in the Render dashboard.
 3. If your site isn't at `https://rowanhosam.github.io`, change `ALLOWED_ORIGINS`.
 4. If Render gives a different URL than `rowan-portfolio-api.onrender.com`, update `CHAT_API` in `index.html`.
+
+## Access gate
+
+First-time visitors pick **Recruiter**, **Engineer** or **Just curious**; the page then
+reorders its sections and swaps the intro button, ask-box hint and brief for that role
+(`ROLES` in the page script). The "Visitor · change" chip reopens it.
+
+Share a link ending in `#recruiter`, `#engineer` or `#curious` to skip the gate with that role.

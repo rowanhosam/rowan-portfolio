@@ -41,7 +41,62 @@ body {
   padding-right: max(16px, env(safe-area-inset-right, 0px));
   overflow-x: hidden;
 }
-.wrap { max-width: 1120px; margin: 0 auto; }
+.wrap { max-width: 1120px; margin: 0 auto; display: flex; flex-direction: column; }
+
+/* Role-based layout: sections reorder for the visitor's role (set on <html data-role>) */
+.top { order: 0; } .hero { order: 1; } .facts { order: 2; } .brief { order: 3; }
+#pass { order: 4; } #stamps { order: 5; } #terminal { order: 6; } #contact { order: 9; }
+:root[data-role="recruiter"] #stamps { order: 4; }
+:root[data-role="recruiter"] #pass { order: 5; }
+:root[data-role="engineer"] #terminal { order: 4; }
+:root[data-role="engineer"] #pass { order: 6; }
+
+.visitor { border: 1px solid var(--line); background: var(--paper); border-radius: 99px; padding: 6px 12px; cursor: pointer;
+  font: 600 .7rem var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.visitor b { color: var(--accent); }
+.visitor:hover { border-color: var(--accent); }
+
+.brief { padding-block: 36px 48px; display: grid; gap: 18px; }
+.briefgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.briefgrid div { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; min-width: 0; }
+.briefgrid h3 { font-size: 1.1rem; }
+.briefgrid p { margin: 8px 0 0; color: var(--muted); font-size: .95rem; }
+
+/* access gate */
+.gate { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; overflow-y: auto;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  background: color-mix(in srgb, var(--bg) 72%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  transition: opacity .5s; }
+.gate.leaving { opacity: 0; pointer-events: none; }
+.gatecard { position: relative; width: min(600px, 100%); background: var(--paper); border: 1px solid var(--line); border-radius: 24px;
+  padding: clamp(20px, 4vw, 36px); box-shadow: 0 40px 80px -40px color-mix(in srgb, var(--ink) 45%, transparent); overflow: hidden; }
+.gatehead { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 16px; border-bottom: 1px dashed var(--line); }
+.gatecard h2 { font-size: clamp(2rem, 6vw, 2.8rem); font-weight: 800; letter-spacing: -.03em; margin-top: 20px; }
+.gatesub { color: var(--muted); margin: 8px 0 20px; }
+.roles { border: 0; padding: 0; margin: 0 0 18px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.roles legend { margin-bottom: 10px; }
+.role { cursor: pointer; display: block; min-width: 0; }
+.role input { position: absolute; opacity: 0; pointer-events: none; }
+.role span { display: grid; gap: 6px; height: 100%; border: 1px solid var(--line); border-radius: 14px; padding: 14px; transition: border-color .15s, background .15s; }
+.role b { font: 700 1.05rem var(--font-display); }
+.role small { color: var(--muted); font-size: .84rem; line-height: 1.4; }
+.role i { font: 600 .62rem var(--font-mono); font-style: normal; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-top: auto; }
+.role input:checked + span { border-color: var(--accent); background: var(--accent-soft); }
+.role input:checked + span i { color: var(--accent); }
+.role input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.gatename { display: block; width: 100%; margin: 8px 0 20px; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--bg); font: 500 1rem var(--font-body); color: var(--ink); }
+.gatename:focus { outline: none; border-color: var(--accent); }
+.gateactions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.grant { border: 0; background: var(--ink); color: var(--bg); padding: 14px 22px; border-radius: 99px; font-weight: 600; cursor: pointer; }
+.skip { border: 0; background: none; color: var(--muted); cursor: pointer; text-decoration: underline; padding: 8px; }
+.gatelog { margin: 0; background: var(--term-bg); color: var(--term-fg); border-radius: 14px; padding: 16px 18px; min-height: 9.5em;
+  font: 400 .85rem/1.7 var(--font-mono); white-space: pre-wrap; word-break: break-word; }
+.gatelog .ok { color: #7ee2a8; }
+.granted { position: absolute; left: 50%; top: 50%; translate: -50% -50%; rotate: -12deg; z-index: 2; pointer-events: none; text-align: center;
+  font: 800 clamp(2rem, 8vw, 3.2rem)/.95 var(--font-display); text-transform: uppercase; letter-spacing: -.01em; color: var(--stamp-green);
+  border: 6px double var(--stamp-green); border-radius: 14px; padding: 14px 24px; background: color-mix(in srgb, var(--paper) 70%, transparent);
+  animation: stampin .35s cubic-bezier(.2, 1.6, .4, 1) both; }
+@keyframes stampin { from { scale: 2.4; opacity: 0; } to { scale: 1; opacity: 1; } }
 h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.05; }
 .label { font: 600 .72rem/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 a { color: var(--accent); }
@@ -202,6 +257,9 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
   .stamps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .record { grid-template-columns: minmax(0, 1fr); }
 }
+@media (max-width: 640px) {
+  .roles, .briefgrid { grid-template-columns: minmax(0, 1fr); }
+}
 @media (max-width: 460px) {
   .stamps { grid-template-columns: minmax(0, 1fr); }
   .hero { grid-template-columns: minmax(0, 1fr); grid-template-areas: "figure" "side" "intro"; }
@@ -217,6 +275,7 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
 <div class="wrap">
   <header class="top">
     <span class="label">Rowan Elansary · Backend Engineer</span>
+    <button type="button" class="visitor" id="visitorChip" title="Change how the site is laid out for you">Visitor · <b id="visitorRole">Guest</b> · change</button>
     <nav><a href="#pass">Pass</a><a href="#stamps">Stamps</a><a href="#terminal">Terminal</a><a href="#contact">Contact</a></nav>
   </header>
 
@@ -224,10 +283,10 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
   <section class="hero">
     <div class="bigname" aria-hidden="true">ROWAN</div>
     <div class="intro">
-      <span class="label">Access pass · Holder</span>
+      <span class="label" id="introLabel">Access pass · Holder</span>
       <h1><em>Backend</em><br>Engineer.</h1>
       <p>APIs, databases and the access rules in between. I build systems that are fast, clean and hard to misuse.</p>
-      <div class="ctas"><a class="primary" href="#stamps">Explore work →</a><a href="#contact">Let's talk</a></div>
+      <div class="ctas"><a class="primary" id="mainCta" href="#stamps">Explore work →</a><a href="#contact">Let's talk</a></div>
     </div>
     <div class="figure">
       <img id="still" src="media/still.png" alt="Rowan Elansary">
@@ -246,7 +305,7 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
           <input id="askInput" type="text" maxlength="300" placeholder="What's your strongest project?">
           <button type="submit" aria-label="Send question"><svg viewBox="0 0 16 16"><path d="M2 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         </div>
-        <span class="askhint">AI answers based on my CV</span>
+        <span class="askhint">AI answers based on my CV · limit of 6 questions a minute</span>
       </form>
     </div>
   </section>
@@ -255,6 +314,12 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
     <div><span class="label">Currently</span><b>Building F3i</b></div>
     <div><span class="label">Status</span><b>Open to work</b></div>
   </div>
+
+  <!-- Role brief: filled in for the visitor's chosen role -->
+  <section class="brief" id="brief">
+    <span class="label" id="briefLabel">Things to try</span>
+    <div class="briefgrid" id="briefGrid"></div>
+  </section>
 
   <!-- ID CARD -->
   <section class="block" id="pass">
@@ -352,6 +417,31 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
   </footer>
 </div>
 
+<!-- ACCESS GATE: visitors pick a role, the page rearranges for it -->
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle" hidden>
+  <div class="gatecard">
+    <div class="gatehead"><span class="label">Access request</span><span class="label">Workspace RE-0008</span></div>
+    <h2 id="gateTitle">Who's visiting?</h2>
+    <p class="gatesub">Pick a role and the site rearranges itself around what you came for.</p>
+    <form id="gateForm" autocomplete="off">
+      <fieldset class="roles">
+        <legend class="label">Role</legend>
+        <label class="role"><input type="radio" name="role" value="recruiter" checked><span><b>Recruiter</b><small>Impact, experience and how to reach me, first.</small><i>Clearance · HR-VIEW</i></span></label>
+        <label class="role"><input type="radio" name="role" value="engineer"><span><b>Engineer</b><small>The stack, the terminal and how this site works.</small><i>Clearance · DEV-READ</i></span></label>
+        <label class="role"><input type="radio" name="role" value="curious"><span><b>Just curious</b><small>The fun parts. Flip, ask and poke around.</small><i>Clearance · GUEST</i></span></label>
+      </fieldset>
+      <label for="gateName" class="label">Your name (optional)</label>
+      <input id="gateName" class="gatename" maxlength="40" placeholder="e.g. Sam">
+      <div class="gateactions">
+        <button type="submit" class="grant">Request access →</button>
+        <button type="button" class="skip" id="gateSkip">Skip</button>
+      </div>
+    </form>
+    <pre class="gatelog" id="gateLog" hidden></pre>
+    <div class="granted" id="granted" hidden>Access<br>granted</div>
+  </div>
+</div>
+
 <script>
 // ---------- talking hero ----------
 // Caption times are seconds into media/intro video. Update when the full-length intro lands.
@@ -402,9 +492,13 @@ vid.addEventListener('ended', () => {
 // Transparent video: Safari plays HEVC with alpha, everyone else plays VP9 WebM with alpha.
 const isSafari = /^((?!chrome|chromium|crios|fxios|android|edg).)*safari/i.test(navigator.userAgent);
 vid.src = isSafari ? 'media/intro-hevc.mp4' : 'media/intro.webm';
+// The intro waits until the access gate is closed, so visitors actually see it.
+let introPending = false;
 vid.addEventListener('loadeddata', () => {
   vid.hidden = false; still.hidden = true;
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setPlaying(true); else setPlaying(false);
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return setPlaying(false);
+  if (!document.getElementById('gate').hidden) { introPending = true; setPlaying(false); }
+  else setPlaying(true);
 }, { once: true });
 
 // ---------- AI chat (answers appear in the speech bubble) ----------
@@ -516,7 +610,7 @@ showStamp(0);
 // ---------- terminal ----------
 const out = document.getElementById('out'), cmd = document.getElementById('cmd');
 const CMDS = {
-  help: () => `available commands:\n  <span class="p">whoami</span>    who is this\n  <span class="p">skills</span>    what I can do\n  <span class="p">stack</span>     tools I use daily\n  <span class="p">projects</span>  things I've built\n  <span class="p">now</span>       what I'm working on\n  <span class="p">hire</span>      how to reach me\n  <span class="p">ask</span> …     ask me anything (AI, based on my CV)\n  <span class="p">clear</span>     wipe the screen`,
+  help: () => `available commands:\n  <span class="p">whoami</span>    who is this\n  <span class="p">skills</span>    what I can do\n  <span class="p">stack</span>     tools I use daily\n  <span class="p">projects</span>  things I've built\n  <span class="p">now</span>       what I'm working on\n  <span class="p">hire</span>      how to reach me\n  <span class="p">ask</span> …     ask me anything (AI, based on my CV, 6 a minute)\n  <span class="p">clear</span>     wipe the screen`,
   whoami: () => `Rowan Elansary. Backend engineer.\nI turn messy requirements into clean APIs and databases you can trust.`,
   skills: () => [
     ['API design', 'REST, versioning, pagination, error contracts'],
@@ -568,6 +662,102 @@ document.getElementById('copyBtn').onclick = async e => {
   catch { getSelection().selectAllChildren(document.getElementById('email')); e.target.textContent = 'Selected, press ⌘C'; }
   setTimeout(() => e.target.textContent = 'Copy email', 1800);
 };
+
+// ---------- access gate + role-based layout ----------
+// Share a link ending in #recruiter, #engineer or #curious to skip the gate with that role.
+const ROLES = {
+  recruiter: {
+    name: 'Recruiter', clearance: 'HR-VIEW', cta: ['See my impact →', '#stamps'], ask: 'Are you open to full-time roles?',
+    briefLabel: 'In 30 seconds',
+    brief: [
+      ['What I do', 'Backend engineering: APIs, databases and access control, in Python and FastAPI.'],
+      ['Recent impact', 'Shipped project-level access control, a geospatial asset map and grant scoring for F3i.'],
+      ['Next step', "I'm open to work. Copy my email at the bottom, or ask me anything up top."],
+    ],
+  },
+  engineer: {
+    name: 'Engineer', clearance: 'DEV-READ', cta: ['Open the terminal →', '#terminal'], ask: 'How does this site’s chat work?',
+    briefLabel: 'Under the hood',
+    brief: [
+      ['Stack', 'Python, FastAPI, PostgreSQL with PostGIS, SQLAlchemy, asyncpg and pytest.'],
+      ['This site', 'A static page plus a FastAPI chat service that calls Claude Haiku, rate limited per visitor with slowapi.'],
+      ['The video', 'AI-generated, background removed frame by frame with BiRefNet, shipped as VP9 and HEVC video with transparency.'],
+    ],
+  },
+  curious: {
+    name: 'Guest', clearance: 'GUEST', cta: ['Flip my ID card →', '#pass'], ask: 'What are you building right now?',
+    briefLabel: 'Things to try',
+    brief: [
+      ['Flip the card', 'Tilt my ID card with your mouse, then click it to flip it over.'],
+      ['Ask me', 'Type a question under my speech bubble and I’ll answer.'],
+      ['Hack the terminal', 'Try sudo, ls or cat secret.txt.'],
+    ],
+  },
+};
+const gate = document.getElementById('gate'), gateForm = document.getElementById('gateForm');
+const gateLog = document.getElementById('gateLog'), granted = document.getElementById('granted');
+const motionOK = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+const wait = ms => new Promise(r => setTimeout(r, motionOK ? ms : 0));
+
+function applyRole(role, visitor = '') {
+  const r = ROLES[role];
+  document.documentElement.dataset.role = role;
+  document.getElementById('visitorRole').textContent = r.name;
+  const cta = document.getElementById('mainCta');
+  cta.textContent = r.cta[0]; cta.href = r.cta[1];
+  askInput.placeholder = r.ask;
+  document.getElementById('introLabel').textContent = visitor ? `Access granted · Welcome, ${visitor}` : `Access granted · ${r.clearance}`;
+  document.getElementById('briefLabel').textContent = r.briefLabel;
+  document.getElementById('briefGrid').innerHTML = r.brief.map(([h, p]) => `<div><h3>${esc(h)}</h3><p>${esc(p)}</p></div>`).join('');
+  try { sessionStorage.setItem('rowan-visitor', JSON.stringify({ role, visitor })); } catch {}
+}
+
+function openGate() {
+  gateForm.hidden = false; gateLog.hidden = true; granted.hidden = true;
+  gate.classList.remove('leaving'); gate.hidden = false;
+  document.body.style.overflow = 'hidden';
+  gateForm.querySelector('input[name="role"]:checked').focus();
+}
+async function closeGate() {
+  gate.classList.add('leaving');
+  await wait(500);
+  gate.hidden = true; document.body.style.overflow = '';
+  if (introPending) { introPending = false; vid.currentTime = 0; setPlaying(true); }
+}
+
+gateForm.onsubmit = async e => {
+  e.preventDefault();
+  const role = new FormData(gateForm).get('role');
+  const visitor = document.getElementById('gateName').value.trim().slice(0, 40);
+  gateForm.hidden = true; gateLog.hidden = false; gateLog.textContent = '';
+  const lines = [
+    `$ POST /access  role=${role}${visitor ? `  name="${visitor}"` : ''}`,
+    '> checking visitor badge… ok',
+    `> issuing clearance ${ROLES[role].clearance}`,
+    '> rearranging workspace for you…',
+  ];
+  for (const l of lines) { gateLog.append(l + '\n'); await wait(320); }
+  const ok = document.createElement('span'); ok.className = 'ok'; ok.textContent = '< 200 ACCESS GRANTED';
+  gateLog.append(ok);
+  applyRole(role, visitor);
+  granted.hidden = false;
+  await wait(900);
+  closeGate();
+};
+document.getElementById('gateSkip').onclick = () => { applyRole('curious'); closeGate(); };
+gate.addEventListener('keydown', e => { if (e.key === 'Escape' && !gateForm.hidden) document.getElementById('gateSkip').click(); });
+document.getElementById('visitorChip').onclick = openGate;
+
+// First visit opens the gate; a role in the link or earlier in this visit skips it.
+(() => {
+  const fromLink = location.hash.slice(1);
+  if (ROLES[fromLink]) return applyRole(fromLink);
+  let saved = null;
+  try { saved = JSON.parse(sessionStorage.getItem('rowan-visitor')); } catch {}
+  if (saved && ROLES[saved.role]) return applyRole(saved.role, saved.visitor);
+  applyRole('curious');
+  openGate();
+})();
 </script>
 </body>
 </html>
