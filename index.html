@@ -14,6 +14,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://rowanhosam.github.io/rowan-portfolio/media/og.png">
 <link rel="icon" href="media/photo.png">
+<script data-goatcounter="https://rowane.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 <title>Rowan Elansary · Software Engineer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -119,6 +120,7 @@ body {
 .role input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
 .gatename { display: block; width: 100%; margin: 8px 0 20px; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--bg); font: 500 1rem var(--font-body); color: var(--ink); }
 .gatename:focus { outline: none; border-color: var(--accent); }
+.gatenote { margin: -12px 0 20px; font-size: .8rem; color: var(--muted); }
 .gateactions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .grant { border: 0; background: var(--ink); color: var(--bg); padding: 14px 22px; border-radius: 99px; font-weight: 600; cursor: pointer; }
 .skip { border: 0; background: none; color: var(--muted); cursor: pointer; text-decoration: underline; padding: 8px; }
@@ -514,7 +516,8 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
         <label class="trk"><input type="radio" name="track" value="ai"><span>AI / ML</span></label>
       </fieldset>
       <label for="gateName" class="label">Your name (optional)</label>
-      <input id="gateName" class="gatename" maxlength="40" placeholder="e.g. Sam">
+      <input id="gateName" class="gatename" maxlength="40" placeholder="e.g. Sam" aria-describedby="gateNameNote">
+      <p class="gatenote" id="gateNameNote">Optional. Shared only with me, so I know who stopped by.</p>
       <div class="gateactions">
         <button type="submit" class="grant">Request access →</button>
         <button type="button" class="skip" id="gateSkip">Skip</button>
@@ -1082,6 +1085,14 @@ const gate = document.getElementById('gate'), gateForm = document.getElementById
 const gateLog = document.getElementById('gateLog'), granted = document.getElementById('granted');
 const wait = ms => new Promise(r => setTimeout(r, motionOK ? ms : 0));
 
+// Visit analytics (GoatCounter, loaded in the page head on the live site; no cookies).
+// Gate choices are sent as events like "gate/recruiter/frontend/Sam".
+function trackEvent(path, title) {
+  const send = () => window.goatcounter?.count?.({ path, title: title || path, event: true });
+  if (window.goatcounter?.count) send();
+  else addEventListener('load', () => setTimeout(send, 400), { once: true });
+}
+
 function applyRole(role, visitor = '', track = null) {
   const r = ROLES[role], t = role === 'recruiter' ? TRACKS[track] || TRACKS.fullstack : null;
   if (t) track = Object.keys(TRACKS).find(k => TRACKS[k] === t); else track = null;
@@ -1130,11 +1141,13 @@ gateForm.onsubmit = async e => {
   const ok = document.createElement('span'); ok.className = 'ok'; ok.textContent = '< 200 ACCESS GRANTED';
   gateLog.append(ok);
   applyRole(role, visitor, track);
+  trackEvent(`gate/${role}${track ? '/' + track : ''}${visitor ? '/' + visitor.replace(/[\/?#]+/g, ' ').replace(/\s+/g, ' ').trim() : ''}`,
+    `${ROLES[role].name}${track ? ' · ' + TRACKS[track].name : ''}${visitor ? ' · ' + visitor : ''}`);
   granted.hidden = false;
   await wait(900);
   closeGate();
 };
-document.getElementById('gateSkip').onclick = () => { applyRole('curious'); closeGate(); };
+document.getElementById('gateSkip').onclick = () => { applyRole('curious'); trackEvent('gate/skipped', 'Skipped the gate'); closeGate(); };
 gate.addEventListener('keydown', e => { if (e.key === 'Escape' && !gateForm.hidden) document.getElementById('gateSkip').click(); });
 document.getElementById('visitorChip').onclick = openGate;
 
@@ -1169,7 +1182,7 @@ new MutationObserver(updateNext).observe(gate, { attributes: true, attributeFilt
 // First visit opens the gate; a role in the link or earlier in this visit skips it.
 (() => {
   const [linkRole, linkTrack] = location.hash.slice(1).split('-');
-  if (ROLES[linkRole]) return applyRole(linkRole, '', linkTrack);
+  if (ROLES[linkRole]) { trackEvent(`link/${location.hash.slice(1)}`, `Opened the #${location.hash.slice(1)} link`); return applyRole(linkRole, '', linkTrack); }
   let saved = null;
   try { saved = JSON.parse(sessionStorage.getItem('rowan-visitor')); } catch {}
   if (saved && ROLES[saved.role]) return applyRole(saved.role, saved.visitor, saved.track);
