@@ -321,6 +321,8 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
 @media (max-width: 640px) {
   .roles, .briefgrid { grid-template-columns: minmax(0, 1fr); }
 }
+/* iPhone Safari zooms into any text field under 16px when tapped; keep them at 16px on touch screens */
+@media (pointer: coarse) { .askrow input, .term input, .gatename { font-size: 16px; } }
 @media (max-width: 460px) {
   .stamps { grid-template-columns: minmax(0, 1fr); }
   .hero { grid-template-columns: minmax(0, 1fr); grid-template-areas: "figure" "side" "intro"; }
@@ -351,8 +353,8 @@ footer h2 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacin
       <div class="ctas"><a class="primary" id="mainCta" href="#stamps">Explore work →</a><a href="#contact">Let's talk</a></div>
     </div>
     <div class="figure">
-      <img id="still" src="media/still.png" alt="Rowan Elansary">
-      <video id="vid" playsinline muted preload="auto" aria-label="Rowan's video introduction" hidden></video>
+      <img id="still" src="media/still.png" alt="Rowan Elansary" hidden>
+      <video id="vid" playsinline muted preload="auto" poster="media/still.png" aria-label="Rowan's video introduction"></video>
     </div>
     <div class="side">
       <div class="rec"><i></i><span>ON AIR · INTRO</span></div>
@@ -538,8 +540,8 @@ const vid = document.getElementById('vid'), still = document.getElementById('sti
 const capEl = document.getElementById('caption'), playBtn = document.getElementById('playBtn'), soundBtn = document.getElementById('soundBtn');
 let shownLine = -1, chatMode = false;
 
-function render() {
-  requestAnimationFrame(render);
+function renderCaption() {
+  requestAnimationFrame(renderCaption);
   if (chatMode) return;
   const t = vid.currentTime || 0, dur = vid.duration || 4;
   let i = 0; CAPTIONS.forEach((c, k) => { if (t >= c.t) i = k; });
@@ -548,10 +550,14 @@ function render() {
   const frac = Math.min(1, (t - line.t) / Math.max(.1, end - line.t - .3));
   [...capEl.children].forEach((w, k) => w.classList.toggle('on', k < Math.ceil(frac * capEl.children.length)));
 }
-requestAnimationFrame(render);
+renderCaption();
 
+// Phones can refuse autoplay (e.g. iPhone Low Power Mode); then the button offers Play and "Hear me" still works.
 function setPlaying(p) {
-  p ? vid.play().catch(() => {}) : vid.pause();
+  if (p) vid.play().catch(() => setPlayIcon(false)); else vid.pause();
+  setPlayIcon(p);
+}
+function setPlayIcon(p) {
   playBtn.setAttribute('aria-label', p ? 'Pause intro' : 'Play intro');
   document.getElementById('playIcon').innerHTML = p
     ? '<rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/>'
@@ -577,17 +583,22 @@ vid.addEventListener('ended', () => {
   playBtn.hidden = true;
 });
 
-// Transparent video: Safari plays HEVC with alpha, everyone else plays VP9 WebM with alpha.
-const isSafari = /^((?!chrome|chromium|crios|fxios|android|edg).)*safari/i.test(navigator.userAgent);
-vid.src = isSafari ? 'media/intro-hevc.mp4' : 'media/intro.webm';
-// The intro waits until the access gate is closed, so visitors actually see it.
+// Transparent video: Apple's engine (Safari, and every browser on iPhone and iPad) plays HEVC with
+// alpha; everything else plays VP9 WebM with alpha.
+const ua = navigator.userAgent;
+const appleWebKit = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)
+  || /^((?!chrome|chromium|crios|fxios|android|edg).)*safari/i.test(ua);
+vid.src = appleWebKit ? 'media/intro-hevc.mp4' : 'media/intro.webm';
+vid.load();
+vid.addEventListener('error', () => { vid.hidden = true; still.hidden = false; });
+
+// The intro plays once the access gate is closed, so visitors actually see it (started at the end of the script).
 let introPending = false;
-vid.addEventListener('loadeddata', () => {
-  vid.hidden = false; still.hidden = true;
+function startIntro() {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return setPlaying(false);
-  if (!document.getElementById('gate').hidden) { introPending = true; setPlaying(false); }
-  else setPlaying(true);
-}, { once: true });
+  if (!document.getElementById('gate').hidden) { introPending = true; return; }
+  setPlaying(true);
+}
 
 // ---------- AI chat (answers appear in the speech bubble) ----------
 // Set CHAT_API to your deployed api/ URL (see README). Locally it uses the dev server.
@@ -729,6 +740,7 @@ function layout() {
 }
 
 function step() {
+  if (!C) return;
   const g = GRAVITY * STEP * STEP;
   for (const p of [...pts.slice(1), C]) {
     if (p === C && drag) continue;
@@ -760,6 +772,7 @@ function step() {
 }
 
 function render() {
+  if (!C) return;
   const e = pts[SEGMENTS];
   const angle = -Math.atan2(C.x - e.x, C.y - e.y);
   hanger.style.transform = `translate(${e.x - cardW / 2}px, ${e.y}px) rotate(${angle}rad)`;
@@ -1193,6 +1206,7 @@ new MutationObserver(updateNext).observe(gate, { attributes: true, attributeFilt
   openGate();
 })();
 updateNext();
+startIntro();
 </script>
 </body>
 </html>
