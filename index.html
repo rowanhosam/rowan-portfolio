@@ -572,10 +572,17 @@ function setSound(on) {
 }
 playBtn.onclick = () => setPlaying(vid.paused);
 soundBtn.onclick = () => {
-  sfxOn = vid.ended || vid.muted;  // the card's clack follows the visitor's sound choice
-  if (sfxOn) unlockSfx();
-  if (vid.ended || vid.muted) { chatMode = false; capEl.classList.remove('ai'); shownLine = -1; vid.currentTime = 0; setSound(true); playBtn.hidden = false; setPlaying(true); }
-  else setSound(false);
+  const turnOn = vid.ended || vid.muted;
+  if (!turnOn) { sfxOn = false; return setSound(false); }
+  // iPhone only allows sound if play() is called straight away in the tap, and it can throw when
+  // rewinding a video it hasn't loaded yet; so: unmute, play, then rewind safely.
+  setSound(true);
+  const playing = vid.play();
+  try { if (vid.readyState > 0) vid.currentTime = 0; else vid.addEventListener('loadedmetadata', () => { vid.currentTime = 0; }, { once: true }); } catch {}
+  chatMode = false; capEl.classList.remove('ai'); shownLine = -1;
+  playBtn.hidden = false; setPlayIcon(true);
+  if (playing) playing.catch(() => { setSound(false); setPlayIcon(false); });
+  sfxOn = true; unlockSfx();  // the card's clack follows the visitor's sound choice
 };
 vid.addEventListener('ended', () => {
   setSound(false);
