@@ -150,13 +150,11 @@ button { font: inherit; color: inherit; }
 .bigname { position: absolute; inset: 4% 0 auto; z-index: -1; text-align: center; pointer-events: none; user-select: none;
   font: 800 clamp(6rem, 24vw, 21rem)/.8 var(--font-display); letter-spacing: -.06em; color: var(--ink); opacity: .06; }
 .figure { grid-area: figure; position: relative; height: clamp(420px, 64vw, 660px); aspect-ratio: 736 / 1248; max-width: 100%; justify-self: center; }
-.figure video, .figure img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: bottom;
-  /* leans and turns slightly toward the cursor, pivoting at the feet (set by script) */
-  transform: perspective(1100px) rotateY(var(--turn, 0deg)) rotate(var(--lean, 0deg)); transform-origin: 50% 100%; }
+.figure video, .figure img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: bottom; }
 .figure::before { content: ""; position: absolute; left: -45%; right: -45%; top: 2%; bottom: -4%; z-index: -1;
   background: radial-gradient(50% 55% at 50% 45%, var(--studio), color-mix(in srgb, var(--studio) 45%, var(--bg)) 55%, transparent 78%); }
 .figure.flat::before { display: none; }
-.figure::after { translate: var(--shift, 0px) 0; content: ""; position: absolute; left: 18%; right: 18%; bottom: 0; height: 18px; z-index: -1; border-radius: 50%;
+.figure::after { content: ""; position: absolute; left: 18%; right: 18%; bottom: 0; height: 18px; z-index: -1; border-radius: 50%;
   background: radial-gradient(closest-side, color-mix(in srgb, var(--ink) 22%, transparent), transparent); }
 .intro { grid-area: intro; padding-bottom: 48px; min-width: 0; }
 .intro h1 { font-size: clamp(2.8rem, 6vw, 5.4rem); font-weight: 800; letter-spacing: -.04em; margin-top: 14px; }
@@ -554,31 +552,6 @@ function renderCaption() {
   [...capEl.children].forEach((w, k) => w.classList.toggle('on', k < Math.ceil(frac * capEl.children.length)));
 }
 renderCaption();
-
-// ---------- the avatar leans toward the cursor ----------
-// A small turn and lean toward wherever the pointer is, easing back to centre when it leaves.
-(() => {
-  const fig = document.querySelector('.figure');
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !matchMedia('(hover: hover)').matches) return;
-  const target = { x: 0 }, now = { x: 0 };
-  let ticking = false;
-  const tick = () => {
-    now.x += (target.x - now.x) * .08;
-    fig.style.setProperty('--turn', `${(now.x * -9).toFixed(2)}deg`);
-    fig.style.setProperty('--lean', `${(now.x * 1.8).toFixed(2)}deg`);
-    fig.style.setProperty('--shift', `${(now.x * 10).toFixed(1)}px`);
-    ticking = Math.abs(target.x - now.x) > .002;
-    if (ticking) requestAnimationFrame(tick);
-  };
-  const aim = x => { target.x = Math.max(-1, Math.min(1, x)); if (!ticking) { ticking = true; requestAnimationFrame(tick); } };
-  addEventListener('pointermove', e => {
-    if (e.pointerType !== 'mouse') return;
-    const r = fig.getBoundingClientRect();
-    if (r.bottom < 0 || r.top > innerHeight) return;  // only while the avatar is on screen
-    aim((e.clientX - (r.left + r.width / 2)) / (innerWidth / 2));
-  }, { passive: true });
-  document.addEventListener('pointerleave', () => aim(0));
-})();
 
 // Phones can refuse autoplay (e.g. iPhone Low Power Mode); then the button offers Play and "Hear me" still works.
 function setPlaying(p) {
