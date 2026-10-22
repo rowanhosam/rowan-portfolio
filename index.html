@@ -153,6 +153,7 @@ button { font: inherit; color: inherit; }
 .figure video, .figure img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: bottom; }
 .figure::before { content: ""; position: absolute; left: -45%; right: -45%; top: 2%; bottom: -4%; z-index: -1;
   background: radial-gradient(50% 55% at 50% 45%, var(--studio), color-mix(in srgb, var(--studio) 45%, var(--bg)) 55%, transparent 78%); }
+.figure.flat::before { display: none; }
 .figure::after { content: ""; position: absolute; left: 18%; right: 18%; bottom: 0; height: 18px; z-index: -1; border-radius: 50%;
   background: radial-gradient(closest-side, color-mix(in srgb, var(--ink) 22%, transparent), transparent); }
 .intro { grid-area: intro; padding-bottom: 48px; min-width: 0; }
@@ -554,7 +555,7 @@ renderCaption();
 
 // Phones can refuse autoplay (e.g. iPhone Low Power Mode); then the button offers Play and "Hear me" still works.
 function setPlaying(p) {
-  if (p) vid.play().catch(() => setPlayIcon(false)); else vid.pause();
+  if (p) vid.play().catch(err => { lastPlayError = `${err.name}: ${err.message}`; setPlayIcon(false); }); else vid.pause();
   setPlayIcon(p);
 }
 function setPlayIcon(p) {
@@ -581,7 +582,14 @@ soundBtn.onclick = () => {
   try { if (vid.readyState > 0) vid.currentTime = 0; else vid.addEventListener('loadedmetadata', () => { vid.currentTime = 0; }, { once: true }); } catch {}
   chatMode = false; capEl.classList.remove('ai'); shownLine = -1;
   playBtn.hidden = false; setPlayIcon(true);
-  if (playing) playing.catch(() => { setSound(false); setPlayIcon(false); });
+  if (playing) playing.catch(err => {
+    lastPlayError = `${err.name}: ${err.message}`;
+    // A format this device can't play: switch to the next file and try again while the tap still counts.
+    if (err.name === 'NotSupportedError' && srcIndex + 1 < SOURCES.length) {
+      useSource(srcIndex + 1);
+      vid.play().catch(e => { lastPlayError = `${e.name}: ${e.message}`; setSound(false); setPlayIcon(false); });
+    } else { setSound(false); setPlayIcon(false); }
+  });
   sfxOn = true; unlockSfx();  // the card's clack follows the visitor's sound choice
 };
 vid.addEventListener('ended', () => {
@@ -595,9 +603,23 @@ vid.addEventListener('ended', () => {
 const ua = navigator.userAgent;
 const appleWebKit = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)
   || /^((?!chrome|chromium|crios|fxios|android|edg).)*safari/i.test(ua);
-vid.src = appleWebKit ? 'media/intro-hevc.mp4' : 'media/intro.webm';
-vid.load();
-vid.addEventListener('error', () => { vid.hidden = true; still.hidden = false; });
+// iPhones and iPads get a plain H.264 copy composited onto the page colour (the most reliable format there);
+// desktop browsers get the transparent versions. If a file fails, the next one in the list takes over.
+const isPhone = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+const SOURCES = isPhone ? ['media/intro-flat.mp4']
+  : appleWebKit ? ['media/intro-hevc.mp4', 'media/intro-flat.mp4'] : ['media/intro.webm', 'media/intro-flat.mp4'];
+let srcIndex = 0, lastPlayError = '';
+function useSource(i) {
+  srcIndex = i;
+  vid.src = SOURCES[i];
+  document.querySelector('.figure').classList.toggle('flat', SOURCES[i].includes('flat'));
+  vid.load();
+}
+useSource(0);
+vid.addEventListener('error', () => {
+  if (srcIndex + 1 < SOURCES.length) { const wasPlaying = !vid.paused || !vid.muted; useSource(srcIndex + 1); if (wasPlaying) vid.play().catch(() => {}); }
+  else { vid.hidden = true; still.hidden = false; }
+});
 
 // The intro plays once the access gate is closed, so visitors actually see it (started at the end of the script).
 let introPending = false;
@@ -1201,6 +1223,27 @@ let nextTick = false;
 addEventListener('scroll', () => { if (!nextTick) { nextTick = true; requestAnimationFrame(() => { nextTick = false; updateNext(); }); } }, { passive: true });
 addEventListener('resize', updateNext);
 new MutationObserver(updateNext).observe(gate, { attributes: true, attributeFilter: ['hidden'] });
+
+// ---------- ?debug: on-screen status of the intro video, for testing on phones ----------
+if (/[?&]debug\b/.test(location.search)) {
+  const box = document.createElement('pre');
+  box.style.cssText = 'position:fixed;left:8px;top:8px;z-index:99;max-width:calc(100vw - 16px);margin:0;padding:8px 10px;border-radius:8px;background:rgba(0,0,0,.82);color:#9ef;font:11px/1.4 ui-monospace,monospace;white-space:pre-wrap;pointer-events:none';
+  document.body.appendChild(box);
+  const events = [];
+  ['loadstart', 'loadedmetadata', 'loadeddata', 'canplay', 'play', 'playing', 'pause', 'waiting', 'stalled', 'ended', 'error'].forEach(n =>
+    vid.addEventListener(n, () => { events.push(n); if (events.length > 8) events.shift(); }));
+  setInterval(() => {
+    const e = vid.error;
+    box.textContent = [
+      `src: ${(vid.currentSrc || vid.src).split('/').pop()}  (${srcIndex + 1}/${SOURCES.length})`,
+      `ready ${vid.readyState} · network ${vid.networkState} · ${vid.paused ? 'paused' : 'playing'} · ${vid.muted ? 'muted' : 'sound on'} · t=${vid.currentTime.toFixed(1)}`,
+      `error: ${e ? `code ${e.code} ${e.message || ''}` : 'none'}`,
+      `last play(): ${lastPlayError || 'ok'}`,
+      `events: ${events.join(' › ')}`,
+      `phone: ${isPhone} · webkit: ${appleWebKit} · lowpower/autoplay blocked? ${lastPlayError.startsWith('NotAllowed') ? 'yes' : 'no'}`,
+    ].join('\n');
+  }, 400);
+}
 
 // First visit opens the gate; a role in the link or earlier in this visit skips it.
 (() => {
