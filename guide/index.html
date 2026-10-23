@@ -68,6 +68,10 @@ table{width:100%;border-collapse:collapse;font-size:15px;margin:12px 0;backgroun
 th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:start;vertical-align:top}
 th{font-weight:700;background:var(--accent-soft)}
 tr:last-child td{border-bottom:0}
+figure{margin:18px 0}
+figure img{display:block;width:100%;height:auto;border-radius:14px;border:1px solid var(--line);background:var(--paper)}
+figcaption{font-size:14px;color:var(--muted);margin-top:6px;text-align:center}
+.when{font-size:13px;font-weight:500;color:var(--gold);margin:0 0 4px}
 footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);color:var(--muted);font-size:15px}
 footer .cta{margin-top:10px}
 </style>
@@ -79,12 +83,12 @@ footer .cta{margin-top:10px}
   <span class="tag">الجايد اللي طلبته 💌</span>
   <h1>اعمل بورتفوليو <em>بيتكلم</em> زي بتاعي</h1>
   <p class="lede">أفاتار بيتكلم بصوتك، كارنيه تقدر تمسكه وترميه، والصفحة بتتغيّر على حسب مين بيفتحها، وكمان AI بيجاوب عنك. هنا كل خطوة عملتها، بالأدوات والبرومبتات اللي تقدر تنسخها على طول.</p>
-  <a class="cta" href="https://rowanhosam.github.io/rowan-portfolio/">شوف البورتفوليو الأول ←</a>
   <div class="meta">
-    <span>⏱ ويك إند واحد تقريباً</span>
-    <span>💸 حوالي ‎$4‎ للأفاتار، والباقي ببلاش</span>
+    <span>⏱ هياخد منك يوم واحد</span>
+    <span>💸 الحاجة الوحيدة اللي هتدفع فيها: الشات بوت</span>
     <span>🧠 HTML · CSS · JS</span>
   </div>
+  <figure><img src="img/hero.jpg" alt="ده الشكل النهائي: الأفاتار واقف على الصفحة نفسها" loading="lazy"><figcaption>ده الشكل النهائي: الأفاتار واقف على الصفحة نفسها</figcaption></figure>
 </header>
 
 <nav class="toc">
@@ -97,9 +101,11 @@ footer .cta{margin-top:10px}
     <li><a href="#s5">ننشر الموقع ببلاش</a></li>
     <li><a href="#s6">نعرف مين دخل</a></li>
   </ol>
+  <p class="cost" style="margin:10px 0 0">☀️ الصبح: الأفاتار والخلفية · 🌤 الضهر: الموقع · 🌇 العصر: الشات بوت · 🌙 بالليل: النشر</p>
 </nav>
 
 <section id="s1">
+  <p class="when">☀️ الصبح</p>
   <div class="step"><span class="num">1</span><h2>الأفاتار اللي بيتكلم</h2></div>
   <p>ده مش فيديو أنا صوّرته. هو صورة واحدة ليا + تسجيل صوتي، والـ AI بيحرّك بُقّي وجسمي على الكلام.</p>
 
@@ -112,12 +118,12 @@ footer .cta{margin-top:10px}
 
   <h3>نعمل الفيديو</h3>
   <ol>
-    <li>افتح <a href="https://wavespeed.ai/models/wavespeed-ai/longcat-avatar-1.5" target="_blank" rel="noopener"><span class="en">LongCat Avatar 1.5</span> على <span class="en">WaveSpeed</span></a> واعمل أكونت. الأكونت الجديد بياخد كريدت صغير ببلاش يكفي تجربة.</li>
+    <li>افتح <a href="https://wavespeed.ai/models/wavespeed-ai/longcat-avatar-1.5" target="_blank" rel="noopener"><span class="en">LongCat Avatar 1.5</span> على <span class="en">WaveSpeed</span></a> واعمل أكونت.</li>
     <li>ارفع الصورة في <code>image</code> والصوت في <code>audio</code>.</li>
     <li>اختار <code>720p</code> والصق البرومبت ده:</li>
   </ol>
   <div class="code"><span class="lbl">prompt</span><button type="button">نسخ</button><pre>A person stands facing the camera in a bright, minimal studio with a plain light-grey background, speaking naturally and confidently to the viewer. Friendly expression, subtle smile, natural blinking, gentle head movements. Hands stay relaxed and clasped in front, with small natural gestures. Static camera, full body in frame, soft even lighting, photorealistic, sharp focus.</pre></div>
-  <p class="cost">التكلفة: حوالي ‎$0.08‎ للثانية في 720p. يعني ١٠ ثواني ≈ ‎$0.80‎. جرّب ٥ ثواني الأول وبعدين اعمل الفيديو الكامل.</p>
+  <p class="cost">💸 الأكونت الجديد بياخد كريدت ببلاش، وأنا عملت الأفاتار بيه من غير ما أدفع حاجة. خلّي المقدمة قصيرة عشان الكريدت يكفيها.</p>
   <div class="note">ليه البرومبت مكتوب كده؟ <b>Static camera</b> عشان الكاميرا ما تتحركش وتعرف تقص نفسك بعدين. <b>Hands clasped</b> لأن الإيدين أضعف حاجة في الموديلات دي، فلما تبقى هادية الغلطات ما تبانش.</div>
 </section>
 
@@ -149,6 +155,7 @@ ffmpeg -framerate 25 -i cut/%04d.png -c:v hevc_videotoolbox -alpha_quality 0.75 
 </section>
 
 <section id="s3">
+  <p class="when">🌤 الضهر</p>
   <div class="step"><span class="num">3</span><h2>نبني الموقع مع AI</h2></div>
   <p>الموقع كله <span class="en">HTML + CSS + JavaScript</span> من غير framework. أنا بنيته مع <span class="en">Claude Code</span> كـ <span class="en">pair programmer</span>: أنا بقرر الفكرة والتصميم، وبراجع وبجرّب كل حاجة. ولو حد سألك في انترفيو قول كده بصراحة، بس افهم كل جزء بيعمل إيه.</p>
   <p>دي البرومبتات اللي تبدأ بيها. ابعت واحد واحد، وجرّب بعد كل خطوة:</p>
@@ -157,23 +164,30 @@ ffmpeg -framerate 25 -i cut/%04d.png -c:v hevc_videotoolbox -alpha_quality 0.75 
   <div class="code"><span class="lbl">prompt</span><button type="button">نسخ</button><pre>Build a single-page portfolio in plain HTML/CSS/JS. Hero: my transparent talking video (intro.webm, with intro-hevc.mp4 for Safari) standing full-body in the centre, my name huge and faded behind it, my title on the left, and a speech bubble on the right with live captions and a "Hear me" button that replays the video with sound. Autoplay muted on first visit only.</pre></div>
 
   <h3>🔐 بوابة الدخول (الصفحة بتتغيّر على حسب الزائر)</h3>
+  <figure><img src="img/gate.jpg" alt="أول ما حد يدخل: يختار هو مين وبيدوّر على إيه" loading="lazy"><figcaption>أول ما حد يدخل: يختار هو مين وبيدوّر على إيه</figcaption></figure>
   <div class="code"><span class="lbl">prompt</span><button type="button">نسخ</button><pre>Add an entry gate styled like an access pass. Visitors pick Recruiter, Engineer or Just curious, and recruiters also pick the role they're hiring for (full stack, front end, back end, design, AI). Reorder and highlight the page sections for that choice using CSS order and a config object, and support links like #recruiter-frontend.</pre></div>
 
   <h3>🪪 الكارنيه اللي بيتحرك</h3>
+  <figure><img src="img/pass.jpg" alt="كارنيه معلّق في شريط، يتسحب ويترمي ويتقلب" loading="lazy"><figcaption>كارنيه معلّق في شريط، يتسحب ويترمي ويتقلب</figcaption></figure>
   <div class="code"><span class="lbl">prompt</span><button type="button">نسخ</button><pre>Add an ID card hanging from a lanyard with realistic rope physics (Verlet integration, no libraries). I can drag and throw it, and clicking flips it in 3D to show the back. Add a holographic foil shine and a soft "clack" sound made with the Web Audio API.</pre></div>
 
   <h3>🛂 أختام الإنجازات</h3>
+  <figure><img src="img/stamps.jpg" alt="كل إنجاز ختم، تدوس عليه ينزلك للتفاصيل" loading="lazy"><figcaption>كل إنجاز ختم، تدوس عليه ينزلك للتفاصيل</figcaption></figure>
   <div class="code"><span class="lbl">prompt</span><button type="button">نسخ</button><pre>Show my achievements as passport stamps with slightly rotated, ink-textured borders. Clicking a stamp scrolls smoothly to the full details of that achievement.</pre></div>
 
   <h3>💻 الـ Terminal</h3>
+  <figure><img src="img/terminal.jpg" alt="الزائر يكتب أوامر ويعرف عنك كل حاجة" loading="lazy"><figcaption>الزائر يكتب أوامر ويعرف عنك كل حاجة</figcaption></figure>
   <div class="code"><span class="lbl">prompt</span><button type="button">نسخ</button><pre>Add an interactive terminal section where visitors type commands like help, skills, experience, projects and contact, with typed-out responses.</pre></div>
 
   <div class="note">💡 ابعت للـ AI الـ CV بتاعك وقوله يكتب المحتوى منه. وراجع كل كلمة: هو ممكن يزوّد حاجات انت ما عملتهاش.</div>
 </section>
 
 <section id="s4">
+  <p class="when">🌇 العصر</p>
   <div class="step"><span class="num">4</span><h2>الشات اللي بيجاوب عنك</h2></div>
   <p>الزائر يسأل سؤال، والـ AI يرد عنك من معلوماتك، والرد بيطلع في فقاعة الكلام.</p>
+  <figure><img src="img/chat.jpg" alt="زائر سأل سؤال والـ AI رد في الفقاعة" loading="lazy"><figcaption>زائر سأل سؤال، والـ AI رد عليه في الفقاعة</figcaption></figure>
+  <div class="note">💸 ده الجزء الوحيد اللي دفعت فيه، لأن كل سؤال بيكلّم <span class="en">Claude API</span>. بس مع الـ limits اللي تحت التكلفة بتفضل قليلة جداً.</div>
   <table>
     <tr><th>الجزء</th><th>استخدمت</th></tr>
     <tr><td>السيرفر</td><td><span class="en">FastAPI</span> (بايثون)</td></tr>
@@ -186,6 +200,7 @@ ffmpeg -framerate 25 -i cut/%04d.png -c:v hevc_videotoolbox -alpha_quality 0.75 
 </section>
 
 <section id="s5">
+  <p class="when">🌙 بالليل</p>
   <div class="step"><span class="num">5</span><h2>ننشر الموقع ببلاش</h2></div>
   <ol>
     <li>اعمل repo جديد على <span class="en">GitHub</span> وارفع فيه <code>index.html</code> وفولدر <code>media</code>.</li>
@@ -205,7 +220,6 @@ ffmpeg -framerate 25 -i cut/%04d.png -c:v hevc_videotoolbox -alpha_quality 0.75 
 
 <footer>
   <p>لو عملت واحد ابعتهولي، نفسي أشوفه 🙌 ولو وقفت في أي خطوة اسألني على الخاص.</p>
-  <a class="cta" href="https://rowanhosam.github.io/rowan-portfolio/">افتح البورتفوليو بتاعي ←</a>
   <p style="margin-top:22px">— Rowan Elansary</p>
 </footer>
 
