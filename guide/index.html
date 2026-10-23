@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اعمل بورتفوليو زي ده</title>
+<meta name="description" content="جايد خطوة بخطوة: أفاتار بيتكلم، كارنيه بيتحرك، AI بيجاوب عنك، وكله أونلاين ببلاش تقريباً.">
+<meta property="og:title" content="اعمل بورتفوليو زي ده — الجايد كامل">
+<meta property="og:description" content="أفاتار بيتكلم، كارنيه بيتحرك، AI بيجاوب عنك — خطوة بخطوة.">
+<meta property="og:image" content="https://rowanhosam.github.io/rowan-portfolio/media/og.png">
+<meta property="og:url" content="https://rowanhosam.github.io/rowan-portfolio/guide/">
+<meta name="twitter:card" content="summary_large_image">
+<script data-goatcounter="https://rowane.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Instrument+Sans:wght@500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f1f2f4; --paper:#fafbfc; --ink:#131a2a; --muted:#5a6274; --line:#d6dae1;
+  --accent:#2b45f5; --accent-soft:#d9defd; --gold:#a87412;
+  --code-bg:#0f1420; --code-fg:#d6deeb; --code-dim:#7c879b;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d111a; --paper:#151b27; --ink:#e8ebf2; --muted:#9aa3b5; --line:#262e3d;
+    --accent:#8a9bff; --accent-soft:#1e2647; --gold:#e0b25a;
+    --code-bg:#0a0e16; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d111a; --paper:#151b27; --ink:#e8ebf2; --muted:#9aa3b5; --line:#262e3d;
+  --accent:#8a9bff; --accent-soft:#1e2647; --gold:#e0b25a;
+  --code-bg:#0a0e16; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.85 "IBM Plex Sans Arabic",system-ui,sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:28px 16px 80px}
+.en,code,kbd{font-family:"Instrument Sans",system-ui,sans-serif;unicode-bidi:isolate;direction:ltr}
+header .tag{display:inline-block;font-size:13px;font-weight:500;color:var(--accent);background:var(--accent-soft);padding:3px 12px;border-radius:999px}
+h1{font-size:clamp(30px,8vw,44px);line-height:1.25;margin:14px 0 10px;font-weight:700}
+h1 em{font-style:normal;color:var(--accent)}
+.lede{color:var(--muted);margin:0 0 22px}
+.cta{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--bg);text-decoration:none;font-weight:500;padding:11px 20px;border-radius:12px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 6px}
+.meta span{font-size:14px;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:4px 12px}
+nav.toc{margin:30px 0;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px 20px}
+nav.toc b{display:block;margin-bottom:6px}
+nav.toc ol{margin:0;padding-inline-start:22px}
+nav.toc a{color:var(--ink);text-decoration:none;border-bottom:1px dashed var(--line)}
+section{margin:44px 0}
+.step{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.num{flex:none;width:38px;height:38px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font:600 17px "Instrument Sans",sans-serif}
+h2{font-size:24px;margin:0;line-height:1.35}
+h3{font-size:18px;margin:22px 0 4px}
+p{margin:10px 0}
+ul,ol{padding-inline-start:22px;margin:8px 0}
+li{margin:4px 0}
+a{color:var(--accent)}
+.note{background:var(--paper);border:1px solid var(--line);border-inline-start:4px solid var(--gold);border-radius:12px;padding:12px 16px;margin:16px 0;font-size:16px}
+.cost{font-size:14px;color:var(--muted)}
+.code{position:relative;margin:12px 0;direction:ltr;text-align:left}
+.code pre{margin:0;background:var(--code-bg);color:var(--code-fg);border-radius:14px;padding:16px;padding-top:40px;overflow-x:auto;font:13.5px/1.6 "JetBrains Mono",monospace;white-space:pre-wrap;word-break:break-word}
+.code .lbl{position:absolute;top:10px;left:14px;font:600 11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--code-dim)}
+.code button{position:absolute;top:7px;right:8px;font:500 12px "Instrument Sans",sans-serif;background:#ffffff14;color:var(--code-fg);border:1px solid #ffffff26;border-radius:8px;padding:4px 10px;cursor:pointer}
+.code button.ok{background:#1d6f48;border-color:#1d6f48}
+table{width:100%;border-collapse:collapse;font-size:15px;margin:12px 0;background:var(--paper);border-radius:12px;overflow:hidden}
+th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:start;vertical-align:top}
+th{font-weight:700;background:var(--accent-soft)}
+tr:last-child td{border-bottom:0}
+footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);color:var(--muted);font-size:15px}
+footer .cta{margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="tag">الجايد اللي طلبته 💌</span>
+  <h1>اعمل بورتفوليو <em>بيتكلم</em> زي بتاعي</h1>
+  <p class="lede">أفاتار بيتكلم بصوتك، كارنيه تقدر تمسكه وترميه، والصفحة بتتغيّر على حسب مين بيفتحها، وكمان AI بيجاوب عنك. هنا كل خطوة عملتها، بالأدوات والبرومبتات اللي تقدر تنسخها على طول.</p>
+  <a class="cta" href="https://rowanhosam.github.io/rowan-portfolio/">شوف البورتفوليو الأول ←</a>
+  <div class="meta">
+    <span>⏱ ويك إند واحد تقريباً</span>
+    <span>💸 حوالي ‎$4‎ للأفاتار، والباقي ببلاش</span>
+    <span>🧠 HTML · CSS · JS</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <b>هنعمل إيه:</b>
+  <ol>
+    <li><a href="#s1">الأفاتار اللي بيتكلم</a></li>
+    <li><a href="#s2">نشيل الخلفية</a></li>
+    <li><a href="#s3">نبني الموقع مع AI</a></li>
+    <li><a href="#s4">الشات اللي بيجاوب عنك</a></li>
+    <li><a href="#s5">ننشر الموقع ببلاش</a></li>
+    <li><a href="#s6">نعرف مين دخل</a></li>
+  </ol>
+</nav>
+
+<section id="s1">
+  <div class="step"><span class="num">1</span><h2>الأفاتار اللي بيتكلم</h2></div>
+  <p>ده مش فيديو أنا صوّرته. هو صورة واحدة ليا + تسجيل صوتي، والـ AI بيحرّك بُقّي وجسمي على الكلام.</p>
+
+  <h3>محتاج إيه</h3>
+  <ul>
+    <li><b>صورة full body</b>: واقف قدام الكاميرا، الخلفية سادة وفاتحة، والإيدين مرتاحين قدامك. كل ما الخلفية أنضف، كل ما شيلها بعدين يبقى أسهل.</li>
+    <li><b>تسجيل صوتك</b>: Voice Memo عادي من الموبايل، ٥–١٠ ثواني بس. مثلاً: <span class="en">"Hi, I'm ___. I'm a software engineer."</span></li>
+  </ul>
+  <div class="note">💡 خلّي المقدمة قصيرة. أغلب الناس بيمشوا قبل ١٠ ثواني، والقصير كمان أرخص.</div>
+
+  <h3>نعمل الفيديو</h3>
+  <ol>
+    <li>افتح <a href="https://wavespeed.ai/models/wavespeed-ai/longcat-avatar-1.5" target="_blank" rel="noopener"><span class="en">LongCat Avatar 1.5</span> على <span class="en">WaveSpeed</span></a> واعمل أكونت. الأكونت الجديد بياخد كريدت صغير ببلاش يكفي تجربة.</li>
+    <li>ارفع الصورة في <code>image</code> والصوت في <code>audio</code>.</li>
+    <li>اختار <code>720p</code> والصق البرومبت ده:</li>
+  </ol>
+  <div class="code"><span class="lbl">prompt</span><button type="button">نسخ</button><pre>A person stands facing the camera in a bright, minimal studio with a plain light-grey background, speaking naturally and confidently to the viewer. Friendly expression, subtle smile, natural blinking, gentle head movements. Hands stay relaxed and clasped in front, with small natural gestures. Static camera, full body in frame, soft even lighting, photorealistic, sharp focus.</pre></div>
+  <p class="cost">التكلفة: حوالي ‎$0.08‎ للثانية في 720p. يعني ١٠ ثواني ≈ ‎$0.80‎. جرّب ٥ ثواني الأول وبعدين اعمل الفيديو الكامل.</p>
+  <div class="note">ليه البرومبت مكتوب كده؟ <b>Static camera</b> عشان الكاميرا ما تتحركش وتعرف تقص نفسك بعدين. <b>Hands clasped</b> لأن الإيدين أضعف حاجة في الموديلات دي، فلما تبقى هادية الغلطات ما تبانش.</div>
+</section>
+
+<section id="s2">
+  <div class="step"><span class="num">2</span><h2>نشيل الخلفية</h2></div>
+  <p>عشان تبان واقف على الصفحة نفسها مش جوه بوكس.</p>
+
+  <h3>الطريقة السهلة (من غير ما تشيل حاجة)</h3>
+  <p>خلّي لون خلفية الموقع <b>نفس لون الحيطة</b> اللي في الفيديو بالظبط. افتح فريم من الفيديو، خد اللون بالـ color picker، وحطّه <code>background</code> للصفحة. ده اللي أنا عامله على الآيفون أصلاً.</p>
+
+  <h3>الطريقة الاحترافية (فيديو شفاف)</h3>
+  <ol>
+    <li>طلّع الفريمات من الفيديو بـ <span class="en">ffmpeg</span>.</li>
+    <li>شيل الخلفية من كل فريم بموديل اسمه <span class="en">BiRefNet</span> (أو أداة <span class="en">rembg</span>). ممكن تطلب من الـ AI يكتبلك سكريبت بايثون يعمل ده.</li>
+    <li>جمّع الفريمات تاني في نسختين: <span class="en">WebM</span> لكروم و<span class="en">HEVC</span> لسفاري.</li>
+  </ol>
+  <div class="code"><span class="lbl">terminal</span><button type="button">نسخ</button><pre># 1) frames out
+ffmpeg -i avatar.mp4 frames/%04d.png
+
+# 2) remove background (pip install "rembg[cpu]")
+rembg p frames/ cut/
+
+# 3a) transparent WebM for Chrome / Android
+ffmpeg -framerate 25 -i cut/%04d.png -c:v libvpx-vp9 -pix_fmt yuva420p -b:v 0 -crf 32 intro.webm
+
+# 3b) transparent HEVC for Safari (Mac only)
+ffmpeg -framerate 25 -i cut/%04d.png -c:v hevc_videotoolbox -alpha_quality 0.75 -tag:v hvc1 intro-hevc.mp4</pre></div>
+  <div class="note">⚠️ الآيفون مش دايماً بيشغّل الفيديو الشفاف. خلّي معاك نسخة <span class="en">MP4</span> عادية على لون الخلفية للآيفون، وخلّي الموقع يختار حسب الجهاز.</div>
+</section>
+
+<section id="s3">
+  <div class="step"><span class="num">3</span><h2>نبني الموقع مع AI</h2></div>
+  <p>الموقع كله <span class="en">HTML + CSS + JavaScript</span> من غير framework. أنا بنيته مع <span class="en">Claude Code</span> كـ <span class="en">pair programmer</span>: أنا بقرر الفكرة والتصميم، وبراجع وبجرّب كل حاجة. ولو حد سألك في انترفيو قول كده بصراحة، بس افهم كل جزء بيعمل إيه.</p>
+  <p>دي البرومبتات اللي تبدأ بيها. ابعت واحد واحد، وجرّب بعد كل خطوة:</p>
+
+  <h3>🎬 الـ Hero</h3>
+  <div class="code"><span class="lbl">prompt</span><button type="button">نسخ</button><pre>Build a single-page portfolio in plain HTML/CSS/JS. Hero: my transparent talking video (intro.webm, with intro-hevc.mp4 for Safari) standing full-body in the centre, my name huge and faded behind it, my title on the left, and a speech bubble on the right with live captions and a "Hear me" button that replays the video with sound. Autoplay muted on first visit only.</pre></div>
+
+  <h3>🔐 بوابة الدخول (الصفحة بتتغيّر على حسب الزائر)</h3>
+  <div class="code"><span class="lbl">prompt</span><button type="button">نسخ</button><pre>Add an entry gate styled like an access pass. Visitors pick Recruiter, Engineer or Just curious, and recruiters also pick the role they're hiring for (full stack, front end, back end, design, AI). Reorder and highlight the page sections for that choice using CSS order and a config object, and support links like #recruiter-frontend.</pre></div>
+
+  <h3>🪪 الكارنيه اللي بيتحرك</h3>
+  <div class="code"><span class="lbl">prompt</span><button type="button">نسخ</button><pre>Add an ID card hanging from a lanyard with realistic rope physics (Verlet integration, no libraries). I can drag and throw it, and clicking flips it in 3D to show the back. Add a holographic foil shine and a soft "clack" sound made with the Web Audio API.</pre></div>
+
+  <h3>🛂 أختام الإنجازات</h3>
+  <div class="code"><span class="lbl">prompt</span><button type="button">نسخ</button><pre>Show my achievements as passport stamps with slightly rotated, ink-textured borders. Clicking a stamp scrolls smoothly to the full details of that achievement.</pre></div>
+
+  <h3>💻 الـ Terminal</h3>
+  <div class="code"><span class="lbl">prompt</span><button type="button">نسخ</button><pre>Add an interactive terminal section where visitors type commands like help, skills, experience, projects and contact, with typed-out responses.</pre></div>
+
+  <div class="note">💡 ابعت للـ AI الـ CV بتاعك وقوله يكتب المحتوى منه. وراجع كل كلمة: هو ممكن يزوّد حاجات انت ما عملتهاش.</div>
+</section>
+
+<section id="s4">
+  <div class="step"><span class="num">4</span><h2>الشات اللي بيجاوب عنك</h2></div>
+  <p>الزائر يسأل سؤال، والـ AI يرد عنك من معلوماتك، والرد بيطلع في فقاعة الكلام.</p>
+  <table>
+    <tr><th>الجزء</th><th>استخدمت</th></tr>
+    <tr><td>السيرفر</td><td><span class="en">FastAPI</span> (بايثون)</td></tr>
+    <tr><td>الموديل</td><td><span class="en">Claude Haiku</span>: سريع ورخيص</td></tr>
+    <tr><td>المعلومات</td><td>ملف <code>profile.md</code> فيه كل حاجة عني، والموديل يجاوب منه بس</td></tr>
+    <tr><td>الاستضافة</td><td><span class="en">Render</span> (فيه خطة ببلاش)</td></tr>
+  </table>
+  <div class="code"><span class="lbl">prompt</span><button type="button">نسخ</button><pre>Write a small FastAPI backend with one POST /ask endpoint that answers questions about me using Claude Haiku, based only on profile.md. Limit each visitor to 6 questions a day with slowapi, add a site-wide daily cap, allow CORS only from my GitHub Pages domain, read the API key from an environment variable, and add a render.yaml so I can deploy it on Render.</pre></div>
+  <div class="note">🔑 <b>أهم حاجة:</b> الـ API key ما يتكتبش أبداً في الكود ولا يترفع على GitHub ولا تبعته لحد. حطّه في الـ Environment Variables جوه Render بس. والـ rate limit هو اللي بيحميك من فاتورة كبيرة.</div>
+</section>
+
+<section id="s5">
+  <div class="step"><span class="num">5</span><h2>ننشر الموقع ببلاش</h2></div>
+  <ol>
+    <li>اعمل repo جديد على <span class="en">GitHub</span> وارفع فيه <code>index.html</code> وفولدر <code>media</code>.</li>
+    <li>ادخل <b>Settings ← Pages</b>، واختار <b>Deploy from a branch</b>، والـ branch <code>main</code>.</li>
+    <li>بعد دقيقة الموقع يبقى على <code class="en">username.github.io/repo-name</code>.</li>
+  </ol>
+  <div class="note">💡 حط <code>og:image</code> في الـ <code>&lt;head&gt;</code> عشان لما تبعت اللينك على لينكدإن أو واتساب يطلع بصورة حلوة.</div>
+</section>
+
+<section id="s6">
+  <div class="step"><span class="num">6</span><h2>نعرف مين دخل</h2></div>
+  <ul>
+    <li><b>عدد الزوار:</b> <a href="https://www.goatcounter.com" target="_blank" rel="noopener">GoatCounter</a>، ببلاش ومن غير cookies. سطر واحد في الصفحة.</li>
+    <li><b>إيميل لما حد يكتب اسمه:</b> endpoint صغير في نفس سيرفر الـ FastAPI يبعتلك إيميل عن طريق <a href="https://resend.com" target="_blank" rel="noopener">Resend</a> (فيه خطة ببلاش).</li>
+  </ul>
+</section>
+
+<footer>
+  <p>لو عملت واحد ابعتهولي، نفسي أشوفه 🙌 ولو وقفت في أي خطوة اسألني على الخاص.</p>
+  <a class="cta" href="https://rowanhosam.github.io/rowan-portfolio/">افتح البورتفوليو بتاعي ←</a>
+  <p style="margin-top:22px">— Rowan Elansary</p>
+</footer>
+
+</div>
+<script>
+document.querySelectorAll('.code button').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const text = btn.parentElement.querySelector('pre').innerText;
+    try { await navigator.clipboard.writeText(text); }
+    catch {
+      const r = document.createRange(); r.selectNodeContents(btn.parentElement.querySelector('pre'));
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); s.removeAllRanges();
+    }
+    btn.textContent = 'اتنسخ ✓'; btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'نسخ'; btn.classList.remove('ok'); }, 1600);
+  });
+});
+</script>
+</body>
+</html>
